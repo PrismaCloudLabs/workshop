@@ -1,0 +1,36 @@
+name: "Build and Scan Containers"
+
+on:
+  workflow_call:
+    inputs:
+      container:
+        required: true
+        type: string
+      dir:
+        required: true
+        type: string
+
+jobs: 
+    build-and-scan:
+        name: Build ${{ inputs.container }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repository
+              uses: actions/checkout@v4.1.3
+
+            - name: Build the image
+              id: container-build
+              run: | 
+                    cd containers/instances/${{ inputs.container }}
+                    imagePath=$(pwd)
+                    docker build -t ghaction/${{ inputs.container }}:${{ inputs.container }} .  
+            
+            - name: Prisma Cloud Image scan
+              id: scan
+              uses: PaloAltoNetworks/prisma-cloud-scan@v1.6.7
+              with:
+                pcc_console_url: ${{ secrets.PC_CONSOLE }}
+                pcc_user: ${{ secrets.PC_KEY }}
+                pcc_pass: ${{ secrets.PC_SECRET }}
+                image_name: "ghaction/${{ inputs.container }}:${{ inputs.container }}"
+                twistcli_publish: true

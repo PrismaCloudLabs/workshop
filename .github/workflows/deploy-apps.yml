@@ -1,0 +1,212 @@
+name: "Deploy Applications | TF Apply"
+
+on:
+  schedule:
+    - cron: '30 23 * * 0' # Build infrastructure at 11:30PM UTC Sunday night, 06:30PM EST Sunday Night)
+                          # // Note: GitHub Scheduled Actions run ~around the time you schedule.
+                          # // It is not uncommon for the start time to be 1-3 hours after the scheduled time.
+  push:
+    branches:
+      - main
+    paths-ignore: 
+      - '**/*.md'
+      - '.github/workflows/**'
+  workflow_dispatch: 
+  
+env:
+  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+  CONFIG_DIRECTORY: "./"
+  COMPOSE_REPLACE: leavethisasis
+  INSTANCE_CONTAINERS: "containers/instances/"
+  K8S_CONTAINERS: "containers/k8s/"
+
+jobs:
+
+  terraform-apply:
+    name: Terraform Cloud
+    uses: ./.github/workflows/ruw-terraform-apply.yml
+    secrets: inherit
+
+  Deploy-Config:
+    name: Get Deployment Config
+    runs-on: ubuntu-latest
+    needs: terraform-apply
+    outputs:
+      region: ${{ steps.region.outputs.DEPLOY_REGION }}
+      ecr_url: ${{ steps.terraform.outputs.ecrRepositoryURL }}
+      ecrRepositoryName: ${{ steps.terraform.outputs.ecrRepositoryName }}
+      eksClusterName: ${{ steps.terraform.outputs.eksClusterName }}
+      eksPublicSubnets:  ${{ steps.terraform.outputs.eksPublicSubnets }}
+      vpcId: ${{ steps.terraform.outputs.vpcId }}
+      publicIPs: ${{ steps.terraform.outputs.publicIPs }}
+      securityGroupIds: ${{ steps.terraform.outputs.securityGroupIds }}
+      defenderInstalls: ${{ steps.defender.outputs.defenderInstalls }}
+      defenderTypes: ${{ steps.defender.outputs.defenderTypes }}
+      runContainers: ${{ steps.defender.outputs.runContainers }}
+      CONTAINERS: ${{ steps.containers.outputs.CONTAINERS }}
+      combinedArray: ${{ steps.combine.outputs.combinedArray }}
+
+    steps:
+      - name: Get Terraform Outputs
+        uses: dnsbty/get-terraform-outputs-action@v2.0
+        id: terraform
+        with:
+          api-token: ${{ secrets.TF_API_TOKEN }}
+          workspace-id: ${{ secrets.TF_WORKSPACE_ID }}
+          outputs: |
+            ecrRepositoryURL
+            ecrRepositoryName
+            eksClusterName
+            eksPublicSubnets
+            vpcId
+            publicIPs
+            securityGroupIds
+
+      - name: Check out the repository
+        uses: actions/checkout@v4.1.3            
+
+      - name: Get Install Defender Output
+        id: defender
+        run: |
+
+          INSTALL_DEFENDER=$(grep -w 'defender' terraform.tfvars | awk -F'=' '{print $2}' | tr -d ' ' | jq -R -s -c 'split("\n")[:-1]')
+          DEFENDER_TYPE=$(grep -w 'defender_type' terraform.tfvars | awk -F'=' '{print $2}' | tr -d ' ' | tr -d '"' | jq -R -s -c 'split("\n")[:-1]')
+          RUN_CONTAINERS=$(grep -w 'run_containers' terraform.tfvars | awk -F'=' '{print $2}' | tr -d ' ' | jq -R -s -c 'split("\n")[:-1]')
+
+          echo "defenderInstalls=$INSTALL_DEFENDER" >> "$GITHUB_OUTPUT"
+          echo "defenderTypes=$DEFENDER_TYPE" >> "$GITHUB_OUTPUT"
+          echo "runContainers=$RUN_CONTAINERS" >> "$GITHUB_OUTPUT"
+
+      - name: Get Deployment Region
+        id: region
+        run: | 
+          REGION=$(grep -A2 'variable "region"' variables.tf | grep 'default' | awk -F' = ' '{print $2}' | sed 's/"//g')
+          echo "DEPLOY_REGION=$REGION" >> "$GITHUB_OUTPUT"
+
+      - name: Get Containers to Build
+        id: containers
+        run: | 
+          INSTANCECONTAINERS=$(ls ${{ env.INSTANCE_CONTAINERS }}  | jq -R -s 'split("\n") | map(select(. != ""))' -c)
+          echo $INSTANCECONTAINERS
+
+          #K8SCONTAINERS=$(ls ${{ env.K8S_CONTAINERS }}  | jq -R -s 'split("\n") | map(select(. != ""))' -c)
+          #echo $K8SCONTAINERS
+          #ALLCONTAINERS=$(jq -c -n --argjson f1 "$INSTANCECONTAINERS" --argjson f2 "$K8SCONTAINERS" '$f1 + $f2')
+          #echo $ALLCONTAINERS
+
+          echo "CONTAINERS=$INSTANCECONTAINERS" >> "$GITHUB_OUTPUT"
+
+      - name: Combine Outputs
+        id: combine
+        run: |
+          defender_installs=$(echo '${{ steps.defender.outputs.defenderInstalls }}' | jq -r '.')
+          defender_types=$(echo '${{ steps.defender.outputs.defenderTypes }}' | jq -r '.')          
+          public_ips=$(echo '${{ secrets.INSTANCE_IPS }}' | jq -r '.')
+          sg_ids=$(echo '${{ secrets.INSTANCE_SGS }}' | jq -r '.')
+
+          containers=$(echo '${{ steps.containers.outputs.CONTAINERS }}' | jq -r '.')
+          runContainers=$(echo '${{ steps.defender.outputs.runContainers }}' | jq -r '.')
+
+          combined_array=$(jq -n \
+            --argjson defenderInstalls "$defender_installs" \
+            --argjson defenderTypes "$defender_types" \
+            --argjson publicIPs "$public_ips" \
+            --argjson sgIDs "$sg_ids" \
+            --argjson runContainers "$runContainers" \
+            --argjson containers "$containers" \
+            '[range(0; $defenderInstalls | length) | {defenderInstall: $defenderInstalls[.], defenderType: $defenderTypes[.], publicIP: $publicIPs[.], sgID: $sgIDs[.], containers: $containers[.], runContainers: $runContainers[.] }]')
+
+          echo "combinedArray=$(echo "$combined_array" | jq -c .)"  >> $GITHUB_OUTPUT
+         
+  EKS:
+    name: Deploy EKS Cluster
+    uses: ./.github/workflows/ruw-deploy-eks.yml
+    needs: [ Deploy-Config ]
+    secrets: inherit
+    with:
+      AWS_REGION: ${{ needs.Deploy-Config.outputs.region }}
+      ECR_REPOSITORY: ${{ needs.Deploy-Config.outputs.ecrRepositoryName }}
+      EKS_CLUSTER_NAME: ${{ needs.Deploy-Config.outputs.eksClusterName }}
+      EKS_PUBLIC_SUBNETS: ${{ needs.Deploy-Config.outputs.eksPublicSubnets }}
+      EKS_K8S_NAMESPACE: "default"
+      VPC_ID: ${{ needs.Deploy-Config.outputs.vpcId }}
+  
+  Push-to-ECR:
+    needs: [ Deploy-Config ]
+    runs-on: ubuntu-latest
+    env:
+      CONTAINERS_PATH: "containers/instances/"
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: ${{ fromJson(needs.Deploy-Config.outputs.CONTAINERS) }}
+    name: Download and push ${{ matrix.containers }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4.1.3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4 
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ needs.Deploy-Config.outputs.region }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ needs.Deploy-Config.outputs.ecrRepositoryName }}
+          CVE: ${{ matrix.containers }}
+        run: |
+          cd $CONTAINERS_PATH/$CVE
+          docker build -t $REGISTRY/$REPOSITORY:$CVE .
+          docker push $REGISTRY/$REPOSITORY:$CVE
+
+  Install-Defender: 
+    name: Install ${{ matrix.configData.defenderType }} defender
+    needs: [ Deploy-Config ]
+    strategy:
+      fail-fast: false
+      matrix:
+        configData: ${{ fromJson(needs.Deploy-Config.outputs.combinedArray) }}
+    uses: ./.github/workflows/ruw-defender-install.yml
+    with:
+      AWS_REGION: ${{ needs.Deploy-Config.outputs.region }}
+      SG_ID: ${{ matrix.configData.sgID }}
+      DEFENDER: ${{ matrix.configData.defenderType }}
+      INSTALL_DEFENDER: ${{ matrix.configData.defenderInstall }}
+      USERNAME: "ec2-user"
+    secrets: 
+      HOST_IP: ${{ matrix.configData.publicIP }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      EC2_KEY: ${{ secrets.EC2_KEY }}
+      PC_KEY: ${{ secrets.PC_KEY }}
+      PC_SECRET: ${{ secrets.PC_SECRET }}
+      PC_CONSOLE: ${{ secrets.PC_CONSOLE }}
+
+  Run-Containers: 
+    name: Pull and run ${{ matrix.configData.runContainers }}
+    needs: [ Push-to-ECR, Deploy-Config, Install-Defender ]
+    strategy:
+      fail-fast: false
+      matrix:
+        configData: ${{ fromJson(needs.Deploy-Config.outputs.combinedArray) }}
+    uses: ./.github/workflows/ruw-run-containers.yml
+    with:
+      AWS_REGION: ${{ needs.Deploy-Config.outputs.region }}
+      SG_ID: ${{ matrix.configData.sgID }}
+      CONTAINER_PATH: "containers/instances/"
+      COMPOSE_REPLACE: leavethisasis
+      ECR_URL: ${{ needs.Deploy-Config.outputs.ecr_url }}
+      runContainers: ${{ matrix.configData.runContainers }}
+      USERNAME: "ec2-user"
+    secrets: 
+      HOST_IP: ${{ matrix.configData.publicIP }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      EC2_KEY: ${{ secrets.EC2_KEY }}

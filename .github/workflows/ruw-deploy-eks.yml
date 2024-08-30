@@ -1,0 +1,126 @@
+name: "Deploy ECR Images to EKS"
+
+on:
+  workflow_call:             
+    inputs:
+      AWS_REGION:
+        required: true
+        type: string
+      ECR_REPOSITORY:
+        required: true
+        type: string
+      EKS_CLUSTER_NAME:
+        required: true
+        type: string
+      EKS_K8S_NAMESPACE:
+        required: true
+        type: string
+      EKS_PUBLIC_SUBNETS:
+        required: true
+        type: string
+      VPC_ID:
+        required: true
+        type: string
+
+env:
+  ECR_REPOSITORY: ${{ inputs.ECR_REPOSITORY }}
+  EKS_CLUSTER_NAME: ${{ inputs.EKS_CLUSTER_NAME }}
+  EKS_K8S_NAMESPACE: ${{ inputs.EKS_K8S_NAMESPACE }}
+  EKS_PUBLIC_SUBNETS: ${{ inputs.EKS_PUBLIC_SUBNETS }}
+  VPC_ID: ${{ inputs.VPC_ID }}
+  CONTAINERS_PATH: "containers/k8s/hello-app"
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set short git commit SHA
+      id: commit
+      uses: prompt/actions-commit-hash@v3.0.0
+      
+    - name: Check out code
+      uses: actions/checkout@v4.1.3
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ inputs.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
+      run: |
+        cd $CONTAINERS_PATH
+        docker build -t $ECR_REGISTRY/${{ inputs.ECR_REPOSITORY }}:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/${{ inputs.ECR_REPOSITORY }}:$IMAGE_TAG
+
+    - name: Update kube config
+      run: |
+        aws eks update-kubeconfig --name ${{ inputs.EKS_CLUSTER_NAME }} --region $AWS_REGION
+
+    # - name: Install eksctl
+    #   run: |
+    #     ARCH=amd64
+    #     PLATFORM=$(uname -s)_$ARCH
+
+    #     curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+    #     tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+    #     sudo mv /tmp/eksctl /usr/local/bin
+
+    # - name: Create K8s ALB
+    #   env: 
+    #     EKS_CLUSTER_NAME: ${{ inputs.EKS_CLUSTER_NAME }}
+    #     REGION: ${{ inputs.AWS_REGION }}
+    #   run: |
+    #     eksctl utils associate-iam-oidc-provider --region $REGION --cluster $EKS_CLUSTER_NAME --approve
+
+    #     curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.8.1/docs/install/iam_policy.json
+
+    #     POLICY_NAME="AWSLoadBalancerControllerIAMPolicy"
+    #     POLICY_ARN=$(aws iam list-policies --query 'Policies[?PolicyName==`'$POLICY_NAME'`].Arn' --output text)
+
+    #     if [ -z "$POLICY_ARN" ]; then
+    #       aws iam create-policy --policy-name $POLICY_NAME --policy-document file://iam_policy.json
+    #       POLICY_ARN=$(aws iam list-policies --query 'Policies[?PolicyName==`'$POLICY_NAME'`].Arn' --output text)
+    #     fi
+
+    #     eksctl create iamserviceaccount --cluster=$EKS_CLUSTER_NAME --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=$POLICY_ARN --approve --override-existing-serviceaccounts
+
+    - name: Deploy to EKS
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        REGION: ${{ inputs.AWS_REGION }}
+      run: |
+        cd $CONTAINERS_PATH
+        
+        for file in manifests/*.yaml; do
+          sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/${{ inputs.ECR_REPOSITORY }}:$IMAGE_TAG|g" "$file"
+          sed -i.bak "s|EKS_K8S_NAMESPACE|$EKS_K8S_NAMESPACE|g" "$file"
+          sed -i.bak "s|EKS_PUBLIC_SUBNETS|$EKS_PUBLIC_SUBNETS|g" "$file"
+        done
+
+        kubectl get nodes
+        #kubectl wait --for=condition=available deployments --all
+        kubectl apply -f manifests/ -n $EKS_K8S_NAMESPACE
+
+        # NAMESPACE="pets"
+        # kubectl get namespace $NAMESPACE > /dev/null 2>&1
+
+        # if [ $? -ne 0 ]; then
+        #   echo "Namespace $NAMESPACE does not exist. Creating it..."
+        #   kubectl create namespace $NAMESPACE
+        # else
+        #   echo "Namespace $NAMESPACE already exists. Proceeding with deployment..."
+        # fi
+
+        # kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/aks-store-demo/main/aks-store-all-in-one.yaml -n pets

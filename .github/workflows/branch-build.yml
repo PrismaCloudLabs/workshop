@@ -1,0 +1,58 @@
+name: "Build and Scan | TF Plan"
+
+on:
+  pull_request:
+
+env:
+  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+  CONFIG_DIRECTORY: "./"
+  INSTANCE_CONTAINERS: "containers/instances/"
+  K8S_CONTAINERS: "containers/k8s/"
+
+jobs:
+  terraform-plan:
+    name: Terraform Cloud
+    uses: ./.github/workflows/ruw-terraform-plan.yml
+    secrets: inherit
+    permissions: 
+      contents: read
+      pull-requests: write
+
+  build-matrix:
+    name: Find Containers to Build
+    runs-on: ubuntu-latest
+    outputs:
+      containers: ${{ steps.set-matrix.outputs.CONTAINERS }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4.1.3
+
+      - name: Generate container instance matrix
+        id: set-matrix
+        run: | 
+          INSTANCECONTAINERS=$(ls ${{ env.INSTANCE_CONTAINERS }}  | jq -R -s 'split("\n") | map(select(. != ""))' -c)
+          echo $INSTANCECONTAINERS
+
+          echo "CONTAINERS=$INSTANCECONTAINERS" >> "$GITHUB_OUTPUT"
+
+      - name: Generate k8s instance matrix
+        id: set-matrix-k8s
+        run: | 
+          K8SCONTAINERS=$(ls ${{ env.K8S_CONTAINERS }}  | jq -R -s 'split("\n") | map(select(. != ""))' -c)
+          echo $K8SCONTAINERS
+
+          echo "K8SCONTAINERS=$K8SCONTAINERS" >> "$GITHUB_OUTPUT"
+
+  container-build-scan:
+    name: Build And Scan Containers
+    if: "!contains(github.event.commits[0].message, '[skip-scan]')"
+    uses: ./.github/workflows/ruw-build-scan-container.yml
+    needs: build-matrix
+    strategy:
+      fail-fast: true
+      matrix:
+        containers: ${{ fromJson(needs.build-matrix.outputs.containers) }}
+    with: 
+      container: ${{ matrix.containers }}
+      dir: INSTANCE_CONTAINERS
+    secrets: inherit

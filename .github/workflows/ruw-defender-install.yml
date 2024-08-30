@@ -1,0 +1,125 @@
+name: "Install Defender"
+
+on:
+  workflow_call:
+    secrets:
+      HOST_IP:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      EC2_KEY: 
+        required: true
+      PC_KEY: 
+        required: true
+      PC_SECRET: 
+        required: true
+      PC_CONSOLE: 
+        required: true
+    inputs:
+      AWS_REGION:
+        required: true
+        type: string
+      SG_ID:
+        required: true
+        type: string
+      DEFENDER:
+        required: true
+        type: string
+      INSTALL_DEFENDER:
+        required: true
+        type: string
+      USERNAME:
+        required: true
+        type: string
+
+jobs: 
+  defend:
+    name: Install Prisma Cloud Defender
+    if: "${{ inputs.INSTALL_DEFENDER == 'true' }}"
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ inputs.AWS_REGION }} 
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4.1.3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Match SG ID to Public IP
+        run: |
+          ips=$(echo '${{ secrets.INSTANCE_IPS }}' | jq -r '.')
+          sgs=$(echo '${{ secrets.INSTANCE_SGS }}' | jq -r '.')
+
+          for i in "${!sgs[@]}"; do
+            if [[ "${sgs[i]}" == "${{ inputs.SG_ID }}" ]]; then
+
+              echo matched_ip
+
+              matched_ip="${ips[i]}"
+              echo "Matched IP: $matched_ip"
+              echo "matched_ip" >> $GITHUB_OUTPUT
+              break
+            fi
+          done          
+
+      - name: Get Public IP
+        id: ip
+        run: |
+          echo "${{ inputs.INSTALL_DEFENDER }}"
+          runnerPublicIp=$(curl http://checkip.amazonaws.com)
+          echo "runnerIP=$runnerPublicIp/32" >> "$GITHUB_ENV"        
+
+      - name: Add Runner IP to Security Group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ inputs.SG_ID }} --protocol tcp --port 22 --cidr $runnerIP       
+
+      - name: Install Prisma Cloud Defender
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ inputs.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            bash <<'EOF'
+            
+            defender="missing"
+
+            if [ "${{ inputs.DEFENDER }}" = "host" ]
+            then
+              if systemctl list-units --type=service --state=running | grep twistlock-defender-server.service
+              then
+                defender="installed"
+              fi
+            fi
+
+            if [ "${{ inputs.DEFENDER }}" = "container" ]
+            then
+              if docker ps -f "name=twistlock" | grep -q 'twistlock'
+              then
+                defender="installed"
+              fi
+            fi
+
+            echo $defender
+
+            if [ $defender == "missing" ]
+            then
+              sudo curl -k -u ${{ secrets.PC_KEY }}:${{ secrets.PC_SECRET }} -L -o twistcli ${{ secrets.PC_CONSOLE }}/api/v1/util/twistcli
+              sudo chmod a+x ./twistcli
+              sudo ./twistcli defender install standalone ${{ inputs.DEFENDER }}-linux --address ${{ secrets.PC_CONSOLE }} --user ${{ secrets.PC_KEY }} --password ${{ secrets.PC_SECRET }}
+            else
+              echo "Defender already installed"
+            fi
+            EOF
+
+      - name: Remove Runner IP from Security Group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ inputs.SG_ID }} --protocol tcp --port 22 --cidr $runnerIP

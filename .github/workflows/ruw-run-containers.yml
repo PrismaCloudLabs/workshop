@@ -1,0 +1,127 @@
+name: "ECR Pull and Container Run"
+
+on:
+  workflow_call:
+    secrets:
+      HOST_IP:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      EC2_KEY: 
+        required: true
+
+    inputs:
+      AWS_REGION:
+        required: true
+        type: string
+      SG_ID:
+        required: true
+        type: string
+      CONTAINER_PATH:
+        required: true
+        type: string
+      COMPOSE_REPLACE:
+        required: true
+        type: string
+      ECR_URL:
+        required: true
+        type: string                
+      runContainers:
+        required: true
+        type: string
+      USERNAME:
+        required: true
+        type: string
+
+jobs: 
+  defend:
+    name: Pull Container from ECR and Run
+    if: "${{ inputs.runContainers == 'true' }}"
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ inputs.AWS_REGION }} 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4 
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2            
+
+      - name: Match SG ID to Public IP
+        run: |
+          ips=$(echo '${{ secrets.INSTANCE_IPS }}' | jq -r '.')
+          sgs=$(echo '${{ secrets.INSTANCE_SGS }}' | jq -r '.')
+
+          for i in "${!sgs[@]}"; do
+            if [[ "${sgs[i]}" == "${{ inputs.SG_ID }}" ]]; then
+
+              echo matched_ip
+
+              matched_ip="${ips[i]}"
+              echo "Matched IP: $matched_ip"
+              echo "matched_ip" >> $GITHUB_OUTPUT
+              break
+            fi
+          done          
+
+      - name: Get Public IP
+        id: ip
+        run: |
+          runnerPublicIp=$(curl http://checkip.amazonaws.com)
+          echo "runnerIP=$runnerPublicIp/32" >> "$GITHUB_ENV"     
+
+      - name: Add Runner IP to Security Group        
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ inputs.SG_ID }} --protocol tcp --port 22 --cidr $runnerIP
+
+      - name: Copy docker-compose files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ inputs.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          source: "${{ inputs.CONTAINER_PATH }}"
+          target: "/home/ec2-user/"
+
+      - name: Pull and Run Container        
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ inputs.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            container_dir="${{ inputs.CONTAINER_PATH }}"
+            cd "$container_dir"
+
+            for dir in */; do
+              cd "$dir"
+              containerFolder=$(basename "$dir")
+              docker-compose down
+
+              IMAGE_NAME="${{ inputs.ECR_URL }}:$containerFolder"
+              REPLACE_TEXT=${{ inputs.COMPOSE_REPLACE }}
+              sed -i "s/${REPLACE_TEXT}/${IMAGE_NAME//\//\\/}/g" docker-compose.yml
+
+              aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+              docker pull ${{ inputs.ECR_URL }}:$containerFolder
+            
+              docker-compose up -d
+
+              cd ..
+            done
+
+      - name: Remove Runner IP from Security Group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ inputs.SG_ID }} --protocol tcp --port 22 --cidr $runnerIP
