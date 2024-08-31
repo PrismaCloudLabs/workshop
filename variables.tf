@@ -1,25 +1,17 @@
 variable "region" {
-  default = "us-east-2"
+  type = string
 }
 
 variable "cidr_block" {
-  default = "10.100.0.0/20"
+  type = string
 }
 
 variable "public_subnet_cidr_block" {
-  default = [
-   "10.100.0.0/24",
-   "10.100.1.0/24",
-   "10.100.2.0/24" 
-  ]
+  type = list(string)
 }
 
 variable "private_subnet_cidr_block" {
-  default = [
-   "10.100.10.0/24",
-   "10.100.11.0/24",
-   "10.100.12.0/24" 
-  ]
+  type = list(string)
 }
 
 variable "instance_type" {
@@ -53,7 +45,6 @@ variable "s3_files" {
 
 variable "eks_cluster_name" {
   type = string
-  default = "code2cloud"
 }
 
 variable "cluster_version" {

@@ -60,7 +60,7 @@ resource "aws_db_snapshot" "this" {
 
 module "ecr" {
   source   = "./modules/ecr"
-  ecr_name = var.ecr_name
+  ecr_name = "${var.ecr_name}-${random_string.this.id}"
 }
 
 # // ------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ module "vmhosts" {
 module "s3" {
   source = "./modules/s3"
 
-  bucket_name = "${var.bucket_name}-${random_string.this.id}"
+  bucket_name = var.bucket_name
   region      = var.region
   s3_files    = var.s3_files
   tags        = var.s3_tags
