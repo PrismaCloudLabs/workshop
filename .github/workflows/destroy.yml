@@ -1,4 +1,4 @@
-name: "[4] Destroy Lab | TF Destroy"
+name: "3 - Destroy Lab | TF Destroy"
 
 on:
   schedule:

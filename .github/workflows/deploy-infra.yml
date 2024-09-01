@@ -1,4 +1,4 @@
-name: "[1] Deploy Infrastructure | TF Apply"
+name: "1 - Deploy Infrastructure | TF Apply"
 
 on:
   schedule:
