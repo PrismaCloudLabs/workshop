@@ -18,11 +18,13 @@ jobs:
 
   terraform-apply:
     name: Terraform Cloud
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: ./.github/workflows/ruw-terraform-apply.yml
     secrets: inherit
 
   Deploy-Config:
     name: Get Deployment Config
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     needs: terraform-apply
     outputs:
@@ -114,6 +116,7 @@ jobs:
          
   EKS:
     name: Deploy EKS Cluster
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: ./.github/workflows/ruw-deploy-eks.yml
     needs: [ Deploy-Config ]
     secrets: inherit
@@ -127,6 +130,7 @@ jobs:
   
   Push-to-ECR:
     needs: [ Deploy-Config ]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     env:
       CONTAINERS_PATH: "containers/instances/"
@@ -162,6 +166,7 @@ jobs:
 
   Install-Defender: 
     name: Install ${{ matrix.configData.defenderType }} defender
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs: [ Deploy-Config ]
     strategy:
       fail-fast: false
@@ -185,6 +190,7 @@ jobs:
 
   Run-Containers: 
     name: Pull and run ${{ matrix.configData.runContainers }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs: [ Push-to-ECR, Deploy-Config, Install-Defender ]
     strategy:
       fail-fast: false
