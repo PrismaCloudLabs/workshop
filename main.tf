@@ -257,5 +257,4 @@ resource "github_actions_secret" "instance_sgs" {
   repository       = split("/", var.git_repo)[1]
   secret_name      = "INSTANCE_SGS"
   plaintext_value  = jsonencode(module.vmhosts.securityGroupIds)
-
 }
