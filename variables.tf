@@ -34,6 +34,10 @@ variable "bucket_name" {
   type = string
 }
 
+variable "deploy_eks" {
+  type = bool
+}
+
 variable "s3_files" {
   type = map(any)
   default = {
