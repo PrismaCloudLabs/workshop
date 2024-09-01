@@ -11,7 +11,7 @@ resource "random_string" "this" {
   lower   = true
   upper   = false
   special = false
-  length  = 5
+  length  = 6
 }
 
 # // ------------------------------------------------------------------------------------
