@@ -2,13 +2,20 @@
 # remote access to ec2 instances. To check your public IP run: curl http://checkip.amazonaws.com
 #
 
+# GLOBALS
+#
+
 region                  = "us-east-2"
-key_name                = "erick-pc"
+key_name                = "erick-pc" # EC2 SSH Private-Key in selected AWS region
+git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
+
 ecr_name                = "pcl-ecr01"
 bucket_name             = "pcl-app01data"
+
+deploy_eks              = true
 eks_cluster_name        = "code2cloud"
 cluster_version         = "1.28"
-git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
+
 
 s3_tags  = {
     Environment = "prod"

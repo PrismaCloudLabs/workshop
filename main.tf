@@ -11,7 +11,11 @@ resource "random_string" "this" {
   lower   = true
   upper   = false
   special = false
-  length  = 5
+  length  = 6
+}
+
+locals {
+  deployEKS = var.deploy_eks == true ? 1 : 0
 }
 
 # // ------------------------------------------------------------------------------------
@@ -120,7 +124,8 @@ resource "aws_s3_bucket" "appdev" {
 #
 
 module "eks" {
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=7cd3be3fbbb695105a447b37c4653a00b0b51b94"
+  count   = local.deployEKS
+  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=7cd3be3fbbb695105a447b37c4653a00b0b51b94"
 
   cluster_name    = var.eks_cluster_name
   cluster_version = var.cluster_version
@@ -202,6 +207,7 @@ provider "helm" {
 }
 
 resource "helm_release" "lb" {
+  count      = local.deployEKS
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
