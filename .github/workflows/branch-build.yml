@@ -1,4 +1,4 @@
-name: "Build and Scan | TF Plan"
+name: "[0] Build and Scan | TF Plan"
 
 on:
   pull_request:

@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "pc-repo" {
-  name                 = var.ecr_name
+  name                 = "${lower(var.ecr_name)}"
   image_tag_mutability = "MUTABLE"
   force_delete         = true
   tags = {}

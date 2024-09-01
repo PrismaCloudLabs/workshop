@@ -1,8 +1,16 @@
+
+resource "random_string" "this" {
+  lower   = true
+  upper   = false
+  special = false
+  length  = 6
+}
+
 #Secret S3 Bucket
 resource "aws_s3_bucket" "this" {
-  bucket        = var.bucket_name
+  bucket        = "${lower(var.bucket_name)}-${random_string.this.id}"
   force_destroy = true
-  tags = merge(var.tags, {})
+  tags          = merge(var.tags, {})
 }
 
 resource "aws_s3_object" "this" {
@@ -13,7 +21,7 @@ resource "aws_s3_object" "this" {
 }
 
 resource "aws_s3_bucket" "log_bucket" {
-  bucket        = "pc-em-diglog-bucket"
+  bucket        = lower("log-bucket-${random_string.this.id}")
   force_destroy = true
   tags = {}
 }

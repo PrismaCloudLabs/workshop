@@ -1,7 +1,7 @@
 variable "region" {
-  default = "us-east-2"
+  type = string
 }
 
 variable "ecr_name" {
-  default = "my-ecr-reg"
+  type = string
 }

@@ -1,3 +1,11 @@
+resource "random_string" "this" {
+  lower   = true
+  upper   = false
+  special = false
+  length  = 6
+}
+
+
 resource "aws_vpc" "this" {
   cidr_block = var.cidr_block
   tags = {
@@ -18,10 +26,10 @@ resource "aws_flow_log" "this" {
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket        = "hub-vpc-flowlogs"
+  bucket        = "hub-flowlogs-${random_string.this.id}"
   force_destroy = true
   tags = {
-    Name        = "hub-vpc-flow"
+    Name        = "hub-flow-logs"
     Environment = "Dev"
   }
 }
