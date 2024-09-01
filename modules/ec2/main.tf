@@ -3,7 +3,7 @@ resource "aws_instance" "this" {
   for_each = { for host in var.vmhosts : host.name => host }
 
   ami                    = each.value.ami
-  instance_type          = var.instance_type
+  instance_type          = each.value.instance_type
   key_name               = var.key_name
   subnet_id              = var.public_subnet_id[0]
   private_ip             = each.value.private_ip

@@ -34,6 +34,7 @@ vmhosts = [
         name            = "attacking"
         ami             = "ami-0900fe555666598a2" # AWS Linux us-east-2
         install_script  = "scripts/attackvm.sh"
+        instance_type   = "t2.small"
         tags            = { Environment = "prod", Department = "HR" }
         defender        = true
         defender_type   = "host"
@@ -46,6 +47,7 @@ vmhosts = [
         name            = "defending"
         ami             = "ami-0900fe555666598a2" # AWS Linux us-east-2
         install_script  = "scripts/vulnerable.sh"
+        instance_type   = "t2.small"
         tags            = { Environment = "prod" }
         defender        = true
         defender_type   = "container"
@@ -58,6 +60,7 @@ vmhosts = [
         name            = "victim"
         ami             = "ami-0900fe555666598a2" # AWS Linux us-east-2
         install_script  = "scripts/vulnerable.sh"
+        instance_type   = "t2.small"
         tags            = { Environment = "dev", Project = "RayGun" }
         defender        = false
         defender_type   = "container"
