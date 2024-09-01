@@ -45,7 +45,7 @@ jobs:
 
   container-build-scan:
     name: Build And Scan Containers
-    if: "!contains(github.event.commits[0].message, '[skip-scan]')"
+    if: ${{ !contains(github.event.head_commit.message, 'noscan') }} 
     uses: ./.github/workflows/ruw-build-scan-container.yml
     needs: build-matrix
     strategy:
