@@ -12,7 +12,6 @@ env:
 jobs:
   terraform-plan:
     name: Terraform Cloud
-    if: ${{ !contains(github.event.commits[0].message, 'noscan') }}
     uses: ./.github/workflows/ruw-terraform-plan.yml
     secrets: inherit
     permissions: 
@@ -46,7 +45,6 @@ jobs:
 
   container-build-scan:
     name: Build And Scan Containers
-    if: ${{ !contains(github.event.commits[0].message, 'noscan') }}
     uses: ./.github/workflows/ruw-build-scan-container.yml
     needs: build-matrix
     strategy:
