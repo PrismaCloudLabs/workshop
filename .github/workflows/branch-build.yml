@@ -12,7 +12,7 @@ env:
 jobs:
   terraform-plan:
     name: Terraform Cloud
-    if: ${{ !contains(github.event.head_commit.message, 'noscan') }}
+    if: ${{ !contains(github.event.workflow_run.head_commit.message, 'noscan') }}
     uses: ./.github/workflows/ruw-terraform-plan.yml
     secrets: inherit
     permissions: 
