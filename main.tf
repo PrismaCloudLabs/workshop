@@ -4,7 +4,7 @@ provider "aws" {
 
 provider "github" {
   token = var.git_token
-  owner = "PrismaCloudLabs"
+  owner = split("/", var.git_repo)[0]
 }
 
 resource "random_string" "this" {
@@ -59,8 +59,9 @@ resource "aws_db_snapshot" "this" {
 #
 
 module "ecr" {
-  source   = "./modules/ecr"
-  ecr_name = "${var.ecr_name}-${random_string.this.id}"
+  source    = "./modules/ecr"
+  ecr_name  = "${var.ecr_name}-${random_string.this.id}"
+  region    = var.region
 }
 
 # // ------------------------------------------------------------------------------------
@@ -98,6 +99,7 @@ resource "aws_s3_bucket" "hr" {
     Terraform   = "true"
     Department  = "HR"
     Owner       = "Martha Stewart"
+    Project     = "RayGun"
   }
 }
 
@@ -108,6 +110,8 @@ resource "aws_s3_bucket" "appdev" {
     Environment = "prod"
     Terraform   = "true"
     Department  = "AppDev"
+    Owner       = "Snoop Dog"
+    Project     = "RayGun v2 Exploration"
   }
 }
 
@@ -163,6 +167,7 @@ module "eks" {
   tags = {
     Environment = "prod"
     Terraform   = "true"
+    Owner       = "RayGun AppDev Team"
     Project     = "RayGun"
   }
 }

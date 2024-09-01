@@ -68,7 +68,7 @@ variable "vmhosts" {
 }
 
 variable "git_repo" {
-  type = string
+  type = string #// Format: OrgName/RepoName
 }
 
 variable "git_token" {

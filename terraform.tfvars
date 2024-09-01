@@ -7,7 +7,7 @@ key_name                = "erick-pc"
 ecr_name                = "pcl-ecr01"
 bucket_name             = "pcl-app01data"
 eks_cluster_name        = "code2cloud"
-cluster_version         = "1.27"
+cluster_version         = "1.28"
 git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
 
 s3_tags  = {
