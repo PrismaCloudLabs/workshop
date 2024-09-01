@@ -14,10 +14,6 @@ variable "private_subnet_cidr_block" {
   type = list(string)
 }
 
-variable "instance_type" {
-  default = "t2.small"
-}
-
 variable "key_name" {
   type = string
 }
@@ -61,6 +57,7 @@ variable "vmhosts" {
     name           = string
     ami            = string
     install_script = string
+    instance_type  = string
     tags           = map(string)
     defender       = bool
     defender_type  = string #host or container
