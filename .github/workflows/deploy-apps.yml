@@ -2,7 +2,7 @@ name: "2 - Deploy Applications | TF Apply"
 
 on:
   workflow_run:
-    workflows: ["[1] Deploy Infrastructure | TF Apply"]
+    workflows: ["1 - Deploy Infrastructure | TF Apply"]
     types:
       - completed
   push:
