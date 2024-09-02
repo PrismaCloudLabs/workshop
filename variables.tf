@@ -34,6 +34,10 @@ variable "deploy_eks" {
   type = bool
 }
 
+variable "eks_node_size" {
+  type = string
+}
+
 variable "s3_files" {
   type = map(any)
   default = {

@@ -13,6 +13,7 @@ ecr_name                = "pcl-ecr01"
 bucket_name             = "pcl-app01data"
 
 deploy_eks              = true
+eks_node_size           = "t2.small"
 eks_cluster_name        = "code2cloud"
 cluster_version         = "1.28"
 
@@ -21,6 +22,8 @@ s3_tags  = {
     Environment = "prod"
     Terraform   = "true"
     Department  = "Finance"
+    Criticality = "High"
+    Owner       = "Nikesh Arora"
     Project     = "RayGun"
 }
 s3_files = {

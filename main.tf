@@ -102,6 +102,7 @@ resource "aws_s3_bucket" "hr" {
     Environment = "prod"
     Terraform   = "true"
     Department  = "HR"
+    Criticality = "High"
     Owner       = "Martha Stewart"
     Project     = "RayGun"
   }
@@ -111,9 +112,10 @@ resource "aws_s3_bucket" "appdev" {
   bucket        = "appdev-data-${random_string.this.id}"
   force_destroy = true
   tags = {
-    Environment = "prod"
+    Environment = "dev"
     Terraform   = "true"
     Department  = "AppDev"
+    Criticality = "Low"
     Owner       = "Snoop Dog"
     Project     = "RayGun v2 Exploration"
   }
@@ -151,7 +153,7 @@ module "eks" {
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
-    instance_types = ["t2.medium"]
+    instance_types = [ var.eks_node_size ]
   }
 
   eks_managed_node_groups = {
@@ -161,7 +163,7 @@ module "eks" {
       desired_size = 2
 
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t2.medium"]
+      instance_types = [ var.eks_node_size ]
       capacity_type  = "SPOT"
     }
   }
