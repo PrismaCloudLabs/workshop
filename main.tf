@@ -72,7 +72,6 @@ module "vmhosts" {
   source = "./modules/ec2"
 
   public_subnet_id = module.network-hub.public_subnet_id
-  key_name         = var.key_name
   vpcId            = module.network-hub.vpc_id
   vmhosts          = var.vmhosts
   instance_profile = module.ecr.iamInstanceProfileName

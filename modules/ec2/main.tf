@@ -6,6 +6,9 @@ data "aws_ami" "aws_linux" {
   }
 }
 
+# // ------------------------------------------------------------------------------------
+# // Create SSH Private Key
+# 
 resource "tls_private_key" "pk" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -16,10 +19,22 @@ resource "aws_key_pair" "kp" {
   public_key = tls_private_key.pk.public_key_openssh
 }
 
-resource "local_file" "ssh_key" {
-  filename = "${aws_key_pair.kp.key_name}.pem"
-  content = tls_private_key.pk.private_key_pem
+# // ------------------------------------------------------------------------------------
+# // Store Private Key in AWS Secrets Manager
+# 
+
+resource "aws_secretsmanager_secret" "ssh_private_key" {
+  name = "ssh_private_key-${var.region}"
 }
+
+resource "aws_secretsmanager_secret_version" "ssh_private_key_version" {
+  secret_id     = aws_secretsmanager_secret.ssh_private_key.id
+  secret_string = tls_private_key.pk.private_key_pem
+}
+
+# // ------------------------------------------------------------------------------------
+# // Deploy EC2 Instances
+# 
 
 resource "aws_instance" "this" {
   for_each = { for host in var.vmhosts : host.name => host }
