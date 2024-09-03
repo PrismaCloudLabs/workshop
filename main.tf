@@ -260,3 +260,9 @@ resource "github_actions_secret" "instance_sgs" {
   secret_name      = "INSTANCE_SGS"
   plaintext_value  = jsonencode(module.vmhosts.securityGroupIds)
 }
+
+resource "github_actions_secret" "sshkey" {
+  repository      = split("/", var.git_repo)[1]
+  secret_name     = "EC2_KEY"
+  plaintext_value = module.vmhosts.sshPrivateKey
+}
