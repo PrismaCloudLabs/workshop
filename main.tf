@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 provider "github" {
-  token = var.git_token
+  #token = var.git_token
   owner = split("/", var.git_repo)[0]
 }
 
