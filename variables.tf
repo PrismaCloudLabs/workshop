@@ -10,10 +10,6 @@ variable "s3_tags" {
   type = map(any)
 }
 
-variable "ecr_name" {
-  type = string
-}
-
 variable "bucket_name" {
   type = string
 }

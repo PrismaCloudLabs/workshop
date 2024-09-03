@@ -61,7 +61,6 @@ resource "aws_db_snapshot" "this" {
 
 module "ecr" {
   source    = "./modules/ecr"
-  ecr_name  = "${var.ecr_name}-${random_string.this.id}"
   region    = var.region
 }
 

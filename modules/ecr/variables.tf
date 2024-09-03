@@ -3,5 +3,6 @@ variable "region" {
 }
 
 variable "ecr_name" {
-  type = string
+  type    = string
+  default = "pc-ecr"
 }

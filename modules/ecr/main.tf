@@ -7,7 +7,7 @@ resource "random_string" "this" {
 
 
 resource "aws_ecr_repository" "pc-repo" {
-  name                 = "${lower(var.ecr_name)}"
+  name                 = "${lower(var.ecr_name)}-${random_string.this.id}"
   image_tag_mutability = "MUTABLE"
   force_delete         = true
   tags = {}

@@ -2,15 +2,9 @@
 # remote access to ec2 instances. To check your public IP run: curl http://checkip.amazonaws.com
 #
 
-# GLOBALS
-#
-
 region                  = "us-east-1"
 key_name                = "erick-pc" # EC2 SSH Private-Key in selected AWS region
 git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
-
-ecr_name                = "pcl-ecr01"
-bucket_name             = "pcl-app01data"
 
 deploy_eks              = true
 eks_node_size           = "t2.small"
@@ -36,24 +30,20 @@ vmhosts = [
     {
         name            = "defending"
         install_script  = "scripts/vulnerable.sh"
-        instance_type   = "t2.small"
         tags            = { Environment = "prod" }
         defender        = true
         defender_type   = "container"
         run_containers  = true
-        private_ip      = "10.100.0.100"
         ports           = [ 22, 80, 443, 9443, 3000, 8080 ]
         cidrs           = [ "0.0.0.0/0", "10.0.0.0/8", "172.16.0.0/12" ] # "0.0.0.0/0 triggers Attack Path"
     },    
     {
         name            = "victim"
         install_script  = "scripts/vulnerable.sh"
-        instance_type   = "t2.small"
         tags            = { Environment = "dev", Project = "RayGun" }
         defender        = false
         defender_type   = "container"
         run_containers  = true
-        private_ip      = "10.100.0.200"
         ports           = [ 22, 80, 443, 9443, 3000, 8080 ]
         cidrs           = [ "0.0.0.0/0", "10.0.0.0/8", "172.16.0.0/12" ] # "0.0.0.0/0 triggers Attack Path"
     }      
