@@ -122,7 +122,6 @@ resource "aws_s3_bucket" "appdev" {
 #
 
 module "eks" {
-  count   = local.deployEKS
   source  = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=7cd3be3fbbb695105a447b37c4653a00b0b51b94"
 
   cluster_name    = var.eks_cluster_name
@@ -205,7 +204,6 @@ provider "helm" {
 }
 
 resource "helm_release" "lb" {
-  count      = local.deployEKS
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
