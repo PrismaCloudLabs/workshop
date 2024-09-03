@@ -72,10 +72,10 @@ module "vmhosts" {
   source = "./modules/ec2"
 
   public_subnet_id = module.network-hub.public_subnet_id
-  key_name         = var.key_name
   vpcId            = module.network-hub.vpc_id
   vmhosts          = var.vmhosts
   instance_profile = module.ecr.iamInstanceProfileName
+  region           = var.region
 
 }
 
@@ -259,4 +259,10 @@ resource "github_actions_secret" "instance_sgs" {
   repository       = split("/", var.git_repo)[1]
   secret_name      = "INSTANCE_SGS"
   plaintext_value  = jsonencode(module.vmhosts.securityGroupIds)
+}
+
+resource "github_actions_secret" "sshkey" {
+  repository      = split("/", var.git_repo)[1]
+  secret_name     = "EC2_KEY"
+  plaintext_value = module.vmhosts.sshPrivateKey
 }
