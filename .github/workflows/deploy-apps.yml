@@ -1,5 +1,7 @@
 name: "3 - Deploy Applications | TF Apply"
 
+# Get SSH key: aws secretsmanager get-secret-value --secret-id your-secret-id --query SecretString --output text
+
 on:
   workflow_run:
     workflows: ["2 - Deploy Infrastructure | TF Apply"]
