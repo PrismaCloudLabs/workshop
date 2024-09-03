@@ -76,6 +76,7 @@ module "vmhosts" {
   vpcId            = module.network-hub.vpc_id
   vmhosts          = var.vmhosts
   instance_profile = module.ecr.iamInstanceProfileName
+  region           = var.region
 
 }
 

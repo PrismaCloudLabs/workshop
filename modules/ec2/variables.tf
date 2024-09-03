@@ -2,7 +2,7 @@ variable "vpcId" {
   type = string
 }
 
-variable "key_name" {
+variable "region" {
   type = string
 }
 

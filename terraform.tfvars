@@ -3,7 +3,6 @@
 #
 
 region                  = "us-east-1"
-key_name                = "erick-pc" # EC2 SSH Private-Key in selected AWS region
 git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
 
 deploy_eks              = true

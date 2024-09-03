@@ -6,12 +6,27 @@ data "aws_ami" "aws_linux" {
   }
 }
 
+resource "tls_private_key" "pk" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "kp" {
+  key_name   = "sshkey-${var.region}"
+  public_key = tls_private_key.pk.public_key_openssh
+}
+
+resource "local_file" "ssh_key" {
+  filename = "${aws_key_pair.kp.key_name}.pem"
+  content = tls_private_key.pk.private_key_pem
+}
+
 resource "aws_instance" "this" {
   for_each = { for host in var.vmhosts : host.name => host }
 
   ami                    = data.aws_ami.aws_linux.id
   instance_type          = each.value.instance_type == null ? "t2.small" : each.value.instance_type 
-  key_name               = var.key_name
+  key_name               = aws_key_pair.kp.key_name
   subnet_id              = var.public_subnet_id[0]
   private_ip             = each.value.private_ip == null ? null : each.value.private_ip
   vpc_security_group_ids = [aws_security_group.instance_sg[each.key].id]

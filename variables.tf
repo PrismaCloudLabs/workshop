@@ -2,10 +2,6 @@ variable "region" {
   type = string
 }
 
-variable "key_name" {
-  type = string
-}
-
 variable "s3_tags" {
   type = map(any)
 }
