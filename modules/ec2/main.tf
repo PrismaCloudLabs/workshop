@@ -24,7 +24,8 @@ resource "aws_key_pair" "kp" {
 # 
 
 resource "aws_secretsmanager_secret" "ssh_private_key" {
-  name = "ssh_private_key-${var.region}"
+  name                    = "ssh_private_key-${var.region}"
+  recovery_window_in_days = 0 # Allow immediate deletion of secrets manager so name can be re-used
 }
 
 resource "aws_secretsmanager_secret_version" "ssh_private_key_version" {
