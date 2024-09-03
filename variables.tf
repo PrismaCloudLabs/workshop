@@ -41,12 +41,12 @@ variable "vmhosts" {
   type = list(object({
     name           = string
     install_script = string
-    instance_type  = string
+    instance_type  = optional(string)
     tags           = map(string)
     defender       = bool
     defender_type  = string #host or container
     run_containers = bool 
-    private_ip     = string
+    private_ip     = optional(string)
     ports          = list(number)
     cidrs          = list(string)
   }))

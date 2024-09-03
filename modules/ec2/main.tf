@@ -10,10 +10,10 @@ resource "aws_instance" "this" {
   for_each = { for host in var.vmhosts : host.name => host }
 
   ami                    = data.aws_ami.aws_linux.id
-  instance_type          = each.value.instance_type ? each.value.instance_type : "t2.small"
+  instance_type          = each.value.instance_type == null ? "t2.small" : each.value.instance_type 
   key_name               = var.key_name
   subnet_id              = var.public_subnet_id[0]
-  private_ip             = each.value.private_ip ? each.value.private_ip : null
+  private_ip             = each.value.private_ip == null ? null : each.value.private_ip
   vpc_security_group_ids = [aws_security_group.instance_sg[each.key].id]
   root_block_device {
     volume_size = 20
