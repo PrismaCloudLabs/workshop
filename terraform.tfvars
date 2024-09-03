@@ -16,17 +16,12 @@ s3_tags  = {
     Owner       = "Nikesh Arora"
     Project     = "RayGun"
 }
-s3_files = {
-        file1 = "sampledata/cardholder_data_primary.csv"
-        file2 = "sampledata/cardholder_data_secondary.csv"
-        file3 = "sampledata/cardholders_corporate.csv"
-}
 
 vmhosts = [
     {
         name            = "defending"
         install_script  = "scripts/vulnerable.sh"
-        tags            = { Environment = "prod" }
+        tags            = { Environment = "dev" }
         defender        = true
         defender_type   = "container"
         run_containers  = true
@@ -36,7 +31,7 @@ vmhosts = [
     {
         name            = "victim"
         install_script  = "scripts/vulnerable.sh"
-        tags            = { Environment = "dev", Project = "RayGun" }
+        tags            = { Environment = "prod", Project = "RayGun", Owner = "Bob Loblaw", Criticality = "High" }
         defender        = false
         defender_type   = "container"
         run_containers  = true
