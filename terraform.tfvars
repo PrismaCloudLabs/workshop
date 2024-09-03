@@ -6,10 +6,7 @@ region                  = "us-east-1"
 git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
 
 deploy_eks              = true
-eks_node_size           = "t2.small"
-eks_cluster_name        = "code2cloud"
 cluster_version         = "1.28"
-
 
 s3_tags  = {
     Environment = "prod"

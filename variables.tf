@@ -12,7 +12,8 @@ variable "deploy_eks" {
 }
 
 variable "eks_node_size" {
-  type = string
+  type    = string
+  default = "t2.small"
 }
 
 variable "s3_files" {
@@ -25,7 +26,8 @@ variable "s3_files" {
 }
 
 variable "eks_cluster_name" {
-  type = string
+  type    = string
+  default = "code2cloud"
 }
 
 variable "cluster_version" {
