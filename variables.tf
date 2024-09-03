@@ -2,18 +2,6 @@ variable "region" {
   type = string
 }
 
-variable "cidr_block" {
-  type = string
-}
-
-variable "public_subnet_cidr_block" {
-  type = list(string)
-}
-
-variable "private_subnet_cidr_block" {
-  type = list(string)
-}
-
 variable "key_name" {
   type = string
 }
@@ -31,7 +19,8 @@ variable "bucket_name" {
 }
 
 variable "deploy_eks" {
-  type = bool
+  type    = bool
+  default = true
 }
 
 variable "eks_node_size" {
@@ -59,7 +48,6 @@ variable "vmhosts" {
   description = "List of VM hosts with their configuration"
   type = list(object({
     name           = string
-    ami            = string
     install_script = string
     instance_type  = string
     tags           = map(string)

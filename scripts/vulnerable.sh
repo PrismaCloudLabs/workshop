@@ -26,6 +26,9 @@ source ~/.bashrc
 source /home/ec2-user/.bashrc
 nvm install node 
 
+# Install Make
+sudo yum install -y make
+
 # Install Compose
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose 
 sudo chmod +x /usr/local/bin/docker-compose 
@@ -35,7 +38,11 @@ git clone https://github.com/Farama-Foundation/Gymnasium.git
 git clone https://github.com/Azure-Samples/azure-search-openai-demo
 git clone https://github.com/Azure/azure-openai-samples
 
+
+# Clone MongoTools
+git clone https://github.com/mongodb/mongo-tools
+
 # Clone Sample App Repo and Run It
-git clone https://github.com/dockersamples/example-voting-app
-cd example-voting-app/
-sudo docker-compose up -d
+# git clone https://github.com/dockersamples/example-voting-app
+# cd example-voting-app/
+# sudo docker-compose up -d

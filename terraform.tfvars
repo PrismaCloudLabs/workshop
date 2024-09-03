@@ -5,7 +5,7 @@
 # GLOBALS
 #
 
-region                  = "us-east-2"
+region                  = "us-east-1"
 key_name                = "erick-pc" # EC2 SSH Private-Key in selected AWS region
 git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
 
@@ -34,21 +34,7 @@ s3_files = {
 
 vmhosts = [
     {
-        name            = "attacking"
-        ami             = "ami-0900fe555666598a2" # AWS Linux us-east-2
-        install_script  = "scripts/attackvm.sh"
-        instance_type   = "t2.small"
-        tags            = { Environment = "prod", Department = "HR" }
-        defender        = true
-        defender_type   = "host"
-        run_containers  = false
-        private_ip      = "10.100.0.254"
-        ports           = [ 22 ]
-        cidrs           = [ "165.1.128.0/17", "137.83.192.0/18" ] # SSH from Private IP
-    },
-    {
         name            = "defending"
-        ami             = "ami-0900fe555666598a2" # AWS Linux us-east-2
         install_script  = "scripts/vulnerable.sh"
         instance_type   = "t2.small"
         tags            = { Environment = "prod" }
@@ -61,7 +47,6 @@ vmhosts = [
     },    
     {
         name            = "victim"
-        ami             = "ami-0900fe555666598a2" # AWS Linux us-east-2
         install_script  = "scripts/vulnerable.sh"
         instance_type   = "t2.small"
         tags            = { Environment = "dev", Project = "RayGun" }

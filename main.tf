@@ -26,9 +26,6 @@ module "network-hub" {
   source = "./modules/network-hub"
 
   region                    = var.region
-  cidr_block                = var.cidr_block
-  private_subnet_cidr_block = var.private_subnet_cidr_block
-  public_subnet_cidr_block  = var.public_subnet_cidr_block
   eks_cluster_name          = var.eks_cluster_name
 }
 
@@ -79,6 +76,7 @@ module "vmhosts" {
   key_name         = var.key_name
   vpcId            = module.network-hub.vpc_id
   vmhosts          = var.vmhosts
+  instance_profile = module.ecr.iamInstanceProfileName
 
 }
 

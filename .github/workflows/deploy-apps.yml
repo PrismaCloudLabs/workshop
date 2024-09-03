@@ -76,7 +76,7 @@ jobs:
       - name: Get Deployment Region
         id: region
         run: | 
-          REGION=$(grep -A2 'variable "region"' variables.tf | grep 'default' | awk -F' = ' '{print $2}' | sed 's/"//g')
+          REGION=$(grep "region                  =" terraform.tfvars | awk -F' = ' '{print$2}' | sed 's/"//g')
           echo "DEPLOY_REGION=$REGION" >> "$GITHUB_OUTPUT"
 
       - name: Get Containers to Build

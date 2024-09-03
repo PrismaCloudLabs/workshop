@@ -1,8 +1,16 @@
+data "aws_ami" "aws_linux" {
+  most_recent = true
+  filter {
+    name   = "product-code"
+    values = ["8acfvh6bldsr1ojb0oe3n8je5"]
+  }
+}
+
 
 resource "aws_instance" "this" {
   for_each = { for host in var.vmhosts : host.name => host }
 
-  ami                    = each.value.ami
+  ami                    = data.aws_ami.aws_linux.id
   instance_type          = each.value.instance_type
   key_name               = var.key_name
   subnet_id              = var.public_subnet_id[0]
@@ -13,7 +21,7 @@ resource "aws_instance" "this" {
   }
   associate_public_ip_address = true
 
-  iam_instance_profile = "ec2_ecr_instance_profile"
+  iam_instance_profile = var.instance_profile
 
   lifecycle {
     ignore_changes = [associate_public_ip_address]

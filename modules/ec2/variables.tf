@@ -10,11 +10,14 @@ variable "public_subnet_id" {
   type = list(any)
 }
 
+variable "instance_profile" {
+  type = string
+}
+
 variable "vmhosts" {
   description = "List of VM hosts with their configuration"
   type = list(object({
     name           = string
-    ami            = string
     install_script = string
     instance_type  = string
     tags           = map(string)
