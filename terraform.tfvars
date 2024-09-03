@@ -3,7 +3,7 @@
 #
 
 region                  = "us-east-1"
-git_repo                = "PrismaCloudLabs/sa-lab" #Organization / repo-name
+git_repo                = "YourOrg/YourRepo" #Organization / repo-name
 
 deploy_eks              = true
 cluster_version         = "1.28"
