@@ -10,10 +10,6 @@ variable "s3_tags" {
   type = map(any)
 }
 
-variable "bucket_name" {
-  type = string
-}
-
 variable "deploy_eks" {
   type    = bool
   default = true

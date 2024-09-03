@@ -86,7 +86,6 @@ module "vmhosts" {
 module "s3" {
   source = "./modules/s3"
 
-  bucket_name = var.bucket_name
   region      = var.region
   s3_files    = var.s3_files
   tags        = var.s3_tags

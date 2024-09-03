@@ -3,7 +3,8 @@ variable "region" {
 }
 
 variable "bucket_name" {
-  type = string
+  type    = string
+  default = "pc-data"
 }
 
 variable "s3_files" {
