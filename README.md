@@ -39,20 +39,30 @@ Key: TF_VAR_git_token Value: PAT from above
 
 ### SSH to EC2 Instance
 
-Connect to Secrets Manager and save private key to local file
+Connect to Secrets Manager and save private key to local file.
 
-```Shell
-aws secretsmanager get-secret-value --secret-id ssh_private_key-us-east-1 --query SecretString --output text --region us-east-1 > useast1.pem
-```
 
-Modify key permissions
+1. Set Region 
+    ```Shell
+    sshKeyRegion = "us-east-1"
+    ```
 
-```Shell
-chmod 400 useast1.pem 
-```
+2. Set instance IP
+    ```Shell
+    instanceIP = "1.1.1.1"
+    ```
 
-Connect to EC2 instance
+3. Pull SSH key from AWS Secrets Manager
+    ```Shell
+    aws secretsmanager get-secret-value --secret-id ssh_private_key-$sshKeyRegion --query SecretString --output text --region $sshKeyRegion > $sshKeyRegion.pem
+    ```
 
-```Shell
-ssh -i useast1.pem ec2-user@<ip_of_ec2>
-```
+4. Modify key permissions
+    ```Shell
+    chmod 400 $sshKeyRegion.pem 
+    ```
+
+5. Connect to EC2 instance
+    ```Shell
+    ssh -i $sshKeyRegion.pem ec2-user@$instanceIP
+    ```
