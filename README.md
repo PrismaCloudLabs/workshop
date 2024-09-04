@@ -1,21 +1,21 @@
-# Terraform SA Lab
+# Code to Cloud AWS Workshop
 
+
+## GitHub Setup
 
 The following variables need to be created and set for the GitHub action to properly setup your lab environment.
 
-Create a GitHub Organization
-Allow GitHub Actions in Organization to open PR's
-Create a Classic PAT with the following values:
-
-Clone this repo into your new organization
+1. Create a GitHub Organization
+2. Allow GitHub Actions in Organization to open PR's
+3. Create a Classic PAT with the following values
+4. Clone this repo into your new organization
 
 ## Terraform Cloud Setup
 
-Create a new workspace
-Create a variable set in your TFC organization with the following values:
+1. Create a new workspace
+2. Create a variable set in your TFC organization with the following values:
 
 Terraform variable with a sensitive value
-
 Key: TF_VAR_git_token Value: PAT from above
 
 
@@ -37,32 +37,49 @@ Key: TF_VAR_git_token Value: PAT from above
 | TF_WORKSPACE | `string` | Name of your created Terraform Cloud Workspace
 | TF_WORKSPACE_ID | `string` | Generated ID of your Terraform Cloud Workspace
 
-### SSH to EC2 Instance
+
+
+## SSH to EC2 Instance
 
 Connect to Secrets Manager and save private key to local file.
 
 
 1. Set Region 
     ```Shell
-    sshKeyRegion = "us-east-1"
+    awsRegion="us-east-1"
     ```
 
 2. Set instance IP
     ```Shell
-    instanceIP = "1.1.1.1"
+    instanceIP="1.1.1.1"
     ```
 
 3. Pull SSH key from AWS Secrets Manager
     ```Shell
-    aws secretsmanager get-secret-value --secret-id ssh_private_key-$sshKeyRegion --query SecretString --output text --region $sshKeyRegion > $sshKeyRegion.pem
+    aws secretsmanager get-secret-value --secret-id ssh_private_key-$awsRegion --query SecretString --output text --region $awsRegion > $awsRegion.pem
     ```
 
 4. Modify key permissions
     ```Shell
-    chmod 400 $sshKeyRegion.pem 
+    chmod 400 $awsRegion.pem 
     ```
 
 5. Connect to EC2 instance
     ```Shell
-    ssh -i $sshKeyRegion.pem ec2-user@$instanceIP
+    ssh -i $awsRegion.pem ec2-user@$instanceIP
+    ```
+
+
+## Update Kubeconfig
+
+Connect to Secrets Manager and save private key to local file.
+
+
+1. Set Region 
+    ```Shell
+    awsRegion="us-east-1"
+    ```
+2. Update kubeconfig
+    ```Shell
+        aws eks update-kubeconfig --region $awsRegion --name code2cloud
     ```
