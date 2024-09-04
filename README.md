@@ -3,6 +3,24 @@
 
 The following variables need to be created and set for the GitHub action to properly setup your lab environment.
 
+Create a GitHub Organization
+Allow GitHub Actions in Organization to open PR's
+Create a Classic PAT with the following values:
+
+Clone this repo into your new organization
+
+## Terraform Cloud Setup
+
+Create a new workspace
+Create a variable set in your TFC organization with the following values:
+
+Terraform variable with a sensitive value
+
+Key: TF_VAR_git_token Value: PAT from above
+
+
+
+
 ----
 
 ### Required Repository Secrets
