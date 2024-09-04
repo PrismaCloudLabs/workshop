@@ -5,7 +5,7 @@
 
 The following variables need to be created and set for the GitHub action to properly setup your lab environment.
 
-1. [Create a GitHub Organization]('https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/creating-a-new-organization-from-scratch')
+1. [Create a GitHub Organization](https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/creating-a-new-organization-from-scratch)
 2. Allow GitHub Actions in Organization to open PR's
 3. Create a Classic PAT with the following values
 4. Clone this repo into your new organization
