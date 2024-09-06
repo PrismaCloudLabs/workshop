@@ -7,13 +7,27 @@ The following variables need to be created and set for the GitHub action to prop
 
 1. [Create a GitHub Organization](https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/creating-a-new-organization-from-scratch)
 2. Allow GitHub Actions in Organization to open PR's
-3. Create a Classic PAT with the following values
+    - Click on your new Organization Name
+    - Settings (top nav)
+    - Actions -> General (left nav)
+    - Scroll to bottom of page, select: "Allow GitHub Actions to create and approve pull requests"
+    - Click "Save"
+
+3. [Create a Classic PAT](!https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with the following values:
+    - repo (all values)
+    - workflow
+    - read:public_key
+    - read:repo_hook
+    - notifications
 4. Clone this repo into your new organization
 
 ## Terraform Cloud Setup
 
 1. Create a new workspace
 2. Create a variable set in your TFC organization with the following values:
+
+
+
 
 Terraform variable with a sensitive value
 Key: TF_VAR_git_token Value: PAT from above
