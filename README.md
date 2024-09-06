@@ -59,10 +59,12 @@ Connect to Secrets Manager and save private key to local file.
     aws secretsmanager get-secret-value --secret-id ssh_private_key-$awsRegion --query SecretString --output text --region $awsRegion > $awsRegion.pem
     ```
 
+
 4. Modify key permissions
     ```Shell
     chmod 400 $awsRegion.pem 
     ```
+
 
 5. Connect to EC2 instance
     ```Shell
@@ -72,8 +74,14 @@ Connect to Secrets Manager and save private key to local file.
 
 ## Update Kubeconfig
 
-Connect to Secrets Manager and save private key to local file.
+Running this command will allow you to execute kubectl commands against the K8s cluster deployed. 
 
+> [!NOTE]
+> You will need to add your SSO accont to the access permissions of the EKS cluster. The following Access policies need to be assigned"
+>   - AmazonEKSAdminPolicy
+>   - AmazonEKSClusterAdminPolicy
+
+---
 
 1. Set Region 
     ```Shell
@@ -87,7 +95,8 @@ Connect to Secrets Manager and save private key to local file.
 
 ## Install K8s Defender Helm Chart
 
-Connect to Secrets Manager and save private key to local file.
+Follow these steps to install the K8s Defender. 
+
 
 1. Set Region and Defender Helm Chart Location
     ```Shell
@@ -100,7 +109,6 @@ Connect to Secrets Manager and save private key to local file.
     kubectl create namespace twistlock
     ```
 
-kubectl create namespace twistlock
 
 3. Install Defender Helm Chart
     ```Shell
