@@ -11,6 +11,8 @@ on:
     paths-ignore: 
       - '**/*.md'
       - '.github/workflows/**'
+      - 'images/**'
+      - 'docs/**'
   workflow_dispatch:
   
 env:
