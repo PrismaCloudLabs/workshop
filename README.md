@@ -22,6 +22,7 @@ The following variables need to be created and set for the GitHub action to prop
     - read:repo_hook
     - notifications
 4. Clone this repo into your new organization
+    - Use this template, create a new repository
 
 ## Terraform Cloud Setup
 
@@ -31,19 +32,12 @@ The following variables need to be created and set for the GitHub action to prop
     - Organization -> Settings -> Variable sets -> Create variable set
     - Name the variable set (Prisma Cloud Lab, etc.)
 3. Create the following variables in the set
-    - AWS_ACCESS_KEY_ID 
-        - Type: Environment variable
-        - Sensitive = false
-    - AWS_SECRET_ACCESS_KEY 
-        - Type: Environment variable
-        - Sensitive = true
-    - TF_VAR_git_token - Terraform variable
-        - Type: Terraform variable
-        - Sensitive = true
-        - Value = [GitHub PAT](GitHub-Setup)
 
-
-
+    > | Name |  Type  | Sensitive | Value |
+    > |------|--------|-----------|-------|
+    > | AWS_ACCESS_KEY_ID | Environment variable | false | AWS Access key
+    > | AWS_SECRET_ACCESS_KEY | Environment variable | true | AWS Access key secret
+    > | TF_VAR_git_token | Terraform variable | true | GitHub PAT value from above
 
 ----
 
@@ -61,12 +55,11 @@ The following variables need to be created and set for the GitHub action to prop
 | TF_WORKSPACE | `string` | Name of your created Terraform Cloud Workspace
 | TF_WORKSPACE_ID | `string` | Generated ID of your Terraform Cloud Workspace
 
-
+---
 
 ## SSH to EC2 Instance
 
 Connect to Secrets Manager and save private key to local file.
-
 
 1. Set Region 
     ```Shell
