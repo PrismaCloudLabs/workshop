@@ -79,7 +79,30 @@ Connect to Secrets Manager and save private key to local file.
     ```Shell
     awsRegion="us-east-1"
     ```
+    
 2. Update kubeconfig
     ```Shell
-        aws eks update-kubeconfig --region $awsRegion --name code2cloud
+    aws eks update-kubeconfig --region $awsRegion --name code2cloud
+    ```
+
+## Install K8s Defender Helm Chart
+
+Connect to Secrets Manager and save private key to local file.
+
+1. Set Region and Defender Helm Chart Location
+    ```Shell
+    awsRegion="us-east-1"
+    helmChart="~/Downloads/twistlock-defender-helm.tar.gz"
+    ```
+    
+2. Create Twistlock Namespace
+    ```Shell
+    kubectl create namespace twistlock
+    ```
+
+kubectl create namespace twistlock
+
+3. Install Defender Helm Chart
+    ```Shell
+    helm upgrade --install twistlock-defender-ds --namespace twistlock --recreate-pods $helmChart
     ```
