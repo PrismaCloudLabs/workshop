@@ -40,7 +40,7 @@ The following variables need to be created and set for the GitHub action to prop
     - TF_VAR_git_token - Terraform variable
         - Type: Terraform variable
         - Sensitive = true
-        - Value = [GitHub PAT](GitHubSetup)
+        - Value = [GitHub PAT](GitHub-Setup)
 
 
 
