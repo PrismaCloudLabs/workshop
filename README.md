@@ -1,7 +1,7 @@
 # Code to Cloud AWS Workshop
 
 
-## GitHub Setup
+## GitHub Setup 1 of 2
 
 The following variables need to be created and set for the GitHub action to properly setup your lab environment.
 
@@ -24,7 +24,7 @@ The following variables need to be created and set for the GitHub action to prop
 4. Clone this repo into your new organization
     - Use this template, create a new repository
 
-## Terraform Cloud Setup
+## Terraform Cloud Setup 1 of 1
 
 1. Create a new workspace in your organization
     - Organization -> Workspaces -> New (Workspace)
@@ -39,7 +39,14 @@ The following variables need to be created and set for the GitHub action to prop
     > | AWS_SECRET_ACCESS_KEY | Environment variable | true | AWS Access key secret
     > | TF_VAR_git_token | Terraform variable | true | GitHub PAT value from above
 
-----
+## GitHub Setup 2 of 2
+
+1. Create the following secrets in your GitHub repository
+    - Navigate to your repo
+    - Settings (top nav)
+    - Secrets and variables -> Actions (side nav)
+    - New respository secret
+    - Repeat until all values have been added
 
 ### Required Repository Secrets
 
