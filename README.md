@@ -98,7 +98,7 @@ Connect to Secrets Manager and save private key to local file.
 Running this command will allow you to execute kubectl commands against the K8s cluster deployed. 
 
 > [!NOTE]
-> You will need to add your SSO accont to the access permissions of the EKS cluster. The following Access policies need to be assigned"
+> You will need to add your SSO accont to the access permissions of the EKS cluster. The following Access policies need to be assigned:
 >   - AmazonEKSAdminPolicy
 >   - AmazonEKSClusterAdminPolicy
 
