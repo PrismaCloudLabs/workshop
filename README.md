@@ -30,11 +30,11 @@
     - Name the variable set (Prisma Cloud Lab, etc.)
 3. Create the following variables in the set
 
-    > | Name |  Type  | Sensitive | Value |
-    > |------|--------|-----------|-------|
-    > | AWS_ACCESS_KEY_ID | Environment variable | false | AWS Access key
-    > | AWS_SECRET_ACCESS_KEY | Environment variable | true | AWS Access key secret
-    > | TF_VAR_git_token | Terraform variable | true | GitHub PAT value from above
+ | Name |  Type  | Sensitive | Value |
+ |------|--------|-----------|-------|
+ | AWS_ACCESS_KEY_ID | Environment variable | false | AWS Access key
+ | AWS_SECRET_ACCESS_KEY | Environment variable | true | AWS Access key secret
+ | TF_VAR_git_token | Terraform variable | true | GitHub PAT value from above
 
 ## GitHub Setup 2 of 2
 
