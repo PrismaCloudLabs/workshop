@@ -19,7 +19,7 @@
     - read:repo_hook
     - notifications
 4. Clone this repo into your new organization
-    - Use this template, create a new repository
+    - Use this template -> create a new repository
 
 ## Terraform Cloud Setup 1 of 1
 
