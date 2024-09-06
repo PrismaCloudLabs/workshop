@@ -13,7 +13,7 @@ The following variables need to be created and set for the GitHub action to prop
     - Scroll to bottom of page, select: "Allow GitHub Actions to create and approve pull requests"
     - Click "Save"
 
-3. [Create a Classic PAT](!https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with the following values:
+3. [Create a Classic PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with the following values:
     - repo (all values)
     - workflow
     - read:public_key
