@@ -13,7 +13,9 @@ The following variables need to be created and set for the GitHub action to prop
     - Scroll to bottom of page, select: "Allow GitHub Actions to create and approve pull requests"
     - Click "Save"
 
-3. [Create a Classic PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with the following values:
+    ![action](images/github/action-pr.png)
+
+3. [Create a Classic PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with the following values, and save the generated token:
     - repo (all values)
     - workflow
     - read:public_key
@@ -23,14 +25,22 @@ The following variables need to be created and set for the GitHub action to prop
 
 ## Terraform Cloud Setup
 
-1. Create a new workspace
-2. Create a variable set in your TFC organization with the following values:
-
-
-
-
-Terraform variable with a sensitive value
-Key: TF_VAR_git_token Value: PAT from above
+1. Create a new workspace in your organization
+    - Organization -> Workspaces -> New (Workspace)
+2. Create a variable set in your TFC organization
+    - Organization -> Settings -> Variable sets -> Create variable set
+    - Name the variable set (Prisma Cloud Lab, etc.)
+3. Create the following variables in the set
+    - AWS_ACCESS_KEY_ID 
+        - Type: Environment variable
+        - Sensitive = false
+    - AWS_SECRET_ACCESS_KEY 
+        - Type: Environment variable
+        - Sensitive = true
+    - TF_VAR_git_token - Terraform variable
+        - Type: Terraform variable
+        - Sensitive = true
+        - Value = [GitHub PAT](GitHubSetup)
 
 
 
