@@ -120,10 +120,9 @@ Running this command will allow you to execute kubectl commands against the K8s 
 Follow these steps to install the K8s Defender. 
 
 
-1. Set Region and Defender Helm Chart Location
+1. Set Defender Helm Chart Location
     ```Shell
-    awsRegion="us-east-1"
-    helmChart="~/Downloads/twistlock-defender-helm.tar.gz"
+    helmChart=~/Downloads/twistlock-defender-helm-33.00.169.tar.gz
     ```
     
 2. Create Twistlock Namespace
@@ -135,4 +134,26 @@ Follow these steps to install the K8s Defender.
 3. Install Defender Helm Chart
     ```Shell
     helm upgrade --install twistlock-defender-ds --namespace twistlock --recreate-pods $helmChart
+    ```
+
+## Install K8s Satellite
+
+Follow these steps to install the K8s Satellite. 
+
+
+1. Navigate to K8s Satellite in Prisma Cloud
+    - Settings -> Connect Provider -> K8s Satellite
+    
+2. Select K8s Cluster
+    ![action](images/github/action-pr.png)
+
+3. Copy Helm Chart Install
+
+4. Deploy Helm Chart
+    ```Shell
+    helm upgrade --install  prismacloud-satellite https://redlock-public.s3.amazonaws.com/helm/prismacloud-satellite/prismacloud-satellite-1.0.4.tgz \
+        --namespace pc-satellite --create-namespace \
+        --set global.satellite.accessKey=00000000-0000-0000-0000-000000000000 \
+        --set global.satellite.prismaAPI=https://api0-events.prismacloud.io \
+    -   -set global.satellite.clusterName=arn:aws:eks:us-east-2:000000000000:cluster/code2cloud
     ```
