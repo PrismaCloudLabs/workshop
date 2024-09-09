@@ -2,7 +2,7 @@
 
 Follow the steps below to setup your lab environment.
 
-Requirements:
+
 
 
 

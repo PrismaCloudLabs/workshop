@@ -1,6 +1,6 @@
 # Code to Cloud AWS Workshop
 
-1. [Setup Lab](docs/Setup/README.md)
+1. [Setup Lab](docs/setup/README.md)
 2. [Connect to Resources](docs/Connect/README.md)
 
 
