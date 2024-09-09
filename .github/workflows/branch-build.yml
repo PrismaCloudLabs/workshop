@@ -2,6 +2,11 @@ name: "1 - Build and Scan | TF Plan"
 
 on:
   pull_request:
+    paths-ignore: 
+      - '**/*.md'
+      - '.github/workflows/**'
+      - 'images/**'
+      - 'docs/**'
 
 env:
   TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
