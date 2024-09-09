@@ -143,11 +143,16 @@ Follow these steps to install the K8s Satellite.
 
 1. Navigate to K8s Satellite in Prisma Cloud
     - Settings -> Connect Provider -> K8s Satellite
+
+    ![k8sselect](images/pc-satellite/step1.png)
     
 2. Select K8s Cluster
-    ![action](images/github/action-pr.png)
+
+    ![k8sselect](images/pc-satellite/step2.png)
+
 
 3. Copy Helm Chart Install
+![k8sselect](images/pc-satellite/step3.png)
 
 4. Deploy Helm Chart
     ```Shell
