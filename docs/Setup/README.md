@@ -43,9 +43,9 @@
 
  | Name |  Type  | Sensitive | Value |
  |------|--------|-----------|-------|
- | AWS_ACCESS_KEY_ID | Environment variable | false | AWS Access key
- | AWS_SECRET_ACCESS_KEY | Environment variable | true | AWS Access key secret
- | TF_VAR_git_token | Terraform variable | true | GitHub PAT value from above
+ | <pre lang="json">AWS_ACCESS_KEY_ID</pre> | Environment variable | false | AWS Access key
+ | <pre lang="json">AWS_SECRET_ACCESS_KEY</pre> | Environment variable | true | AWS Access key secret
+ | <pre lang="json">TF_VAR_git_token</pre> | Terraform variable | true | GitHub PAT value from above
 
 ## GitHub Setup 3 of 3
 
