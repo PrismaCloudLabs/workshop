@@ -2,12 +2,12 @@
 
 ---
 
-1. [Setup Lab](docs/Setup/README.md)
+1. [Setup Lab](/docs/Setup/README.md)
     - [GitHub Setup 1 of 3](#github-setup-1-of-3)
     - [Terraform Cloud Setup 2 of 3](#terraform-cloud-setup-2-of-3)
     - [GitHub Setup 3 of 3](#github-setup-3-of-3)
         - [Required Repository Secrets](#required-repository-secrets)
-2. [Connect to Resources](docs/Connect/README.md)
+2. [Connect to Resources](/docs/Connect/README.md)
 
 ---
 
@@ -21,7 +21,7 @@
     - Scroll to bottom of page, select: "Allow GitHub Actions to create and approve pull requests"
     - Click "Save"
 
-    ![action](images/github/action-pr.png)
+    ![action](/images/github/action-pr.png)
 
 3. [Create a Classic PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) with the following values, and save the generated token:
     - repo (all values)
