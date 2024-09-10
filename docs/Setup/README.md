@@ -62,7 +62,7 @@
 
  | Secret |  Type  | Description |
  |--------|---------|-------------|
-| <pre lang="sh">AWS_ACCESS_KEY_ID></pre> | `string` | AWS IAM access key with the ability to create and provision infrastructure
+| <pre lang="sh">AWS_ACCESS_KEY_ID</pre> | `string` | AWS IAM access key with the ability to create and provision infrastructure
 | <pre lang="sh">AWS_SECRET_ACCESS_KEY</pre> | `string` | Password/secret key for IAM access key
 | <pre lang="sh">PC_CONSOLE</pre> | `string` | Runtime console path (Runtime -> Manage -> System -> Utilities )
 | <pre lang="sh">PC_KEY</pre> | `string` | Access key with permissions to install Defender (Settings -> Access Control -> Access Keys)
