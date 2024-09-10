@@ -4,9 +4,9 @@ Following these steps will allow you to remotely connect to the instances and K8
 
 ---
 
-1. [Setup Lab](docs/Setup/README.md)
-2. [Connect to Resources](docs/Connect/README.md)
-    - [Connect to EC2 Instance](docs/Connect/ssh-to-ec2-instance)
+1. [Setup Lab](~/docs/Setup/README.md)
+2. [Connect to Resources](~/docs/Connect/README.md)
+    - [Connect to EC2 Instance](#ssh-to-ec2-instance)
     - [Connect to EKS](#update-kubeconfig)
     - [Install K8s Defender](#install-defender-helm-chart)
     - [Install Satellite](#install-satellite)
@@ -95,15 +95,15 @@ Follow these steps to install the K8s Satellite.
 1. Navigate to K8s Satellite in Prisma Cloud
     - Settings -> Connect Provider -> K8s Satellite
 
-    ![k8sselect](images/pc-satellite/step1.png)
+    ![k8sselect](~/images/pc-satellite/step1.png)
     
 2. Select K8s Cluster
 
-    ![k8sselect](images/pc-satellite/step2.png)
+    ![k8sselect](~/images/pc-satellite/step2.png)
 
 
 3. Copy Helm Chart Install
-![k8sselect](images/pc-satellite/step3.png)
+![k8sselect](~/images/pc-satellite/step3.png)
 
 4. Deploy Helm Chart
     ```Shell
