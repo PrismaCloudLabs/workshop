@@ -51,8 +51,8 @@
 
 1. Create the following secrets in your GitHub repository
     - Navigate to your repo
-        > [!NOTE]
-        > If you do not see your repo make certain you first navigate to the organization you just created
+> [!NOTE]
+> If you do not see your repo make certain you first navigate to the organization you just created
     - Settings (top nav)
     - Secrets and variables -> Actions (side nav)
     - New respository secret
