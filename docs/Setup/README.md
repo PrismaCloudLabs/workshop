@@ -1,8 +1,15 @@
 # Code to Cloud AWS Workshop
 
-1. [Setup Lab](docs/setup/README.md)
+---
+
+1. [Setup Lab](docs/Setup/README.md)
+    - [GitHub Setup 1 of 3](#github-setup-1-of-3)
+    - [Terraform Cloud Setup 2 of 3](#terraform-cloud-setup-2-of-3)
+    - [GitHub Setup 3 of 3](#github-setup-3-of-3)
+        - [Required Repository Secrets](#required-repository-secrets)
 2. [Connect to Resources](docs/Connect/README.md)
 
+---
 
 ## GitHub Setup 1 of 3
 

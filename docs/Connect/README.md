@@ -6,8 +6,8 @@ Following these steps will allow you to remotely connect to the instances and K8
 
 1. [Setup Lab](docs/Setup/README.md)
 2. [Connect to Resources](docs/Connect/README.md)
-    - [Connect to EC2 Instance](docs/Connect/README.md#ssh-to-ec2-instance)
-    - [Connect to EKS Control Plane](#update-kubeconfig)
+    - [Connect to EC2 Instance](docs/Connect/ssh-to-ec2-instance)
+    - [Connect to EKS](#update-kubeconfig)
     - [Install K8s Defender](#install-defender-helm-chart)
     - [Install Satellite](#install-satellite)
 
