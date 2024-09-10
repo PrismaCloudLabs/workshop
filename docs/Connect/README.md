@@ -111,5 +111,5 @@ Follow these steps to install the K8s Satellite.
         --namespace pc-satellite --create-namespace \
         --set global.satellite.accessKey=00000000-0000-0000-0000-000000000000 \
         --set global.satellite.prismaAPI=https://api0-events.prismacloud.io \
-    -   -set global.satellite.clusterName=arn:aws:eks:us-east-2:000000000000:cluster/code2cloud
+        --set global.satellite.clusterName=arn:aws:eks:us-east-2:000000000000:cluster/code2cloud
     ```
