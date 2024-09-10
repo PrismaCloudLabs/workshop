@@ -49,10 +49,11 @@
 
 ## GitHub Setup 3 of 3
 
-1. Create the following secrets in your GitHub repository
-    - Navigate to your repo
 > [!NOTE]
 > If you do not see your repo make certain you first navigate to the organization you just created
+
+1. Create the following secrets in your GitHub repository
+    - Navigate to your repo
     - Settings (top nav)
     - Secrets and variables -> Actions (side nav)
     - New respository secret
