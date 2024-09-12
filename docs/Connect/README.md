@@ -7,6 +7,7 @@ Following these steps will allow you to remotely connect to the instances and K8
 1. [Setup Lab](/docs/Setup/README.md)
 2. [Connect to Resources](/docs/Connect/README.md)
     - [Connect to EC2 Instance](#ssh-to-ec2-instance)
+    - [Allow Access to EKS](#allow-access-to-eks)
     - [Connect to EKS](#update-kubeconfig)
     - [Install K8s Defender](#install-defender-helm-chart)
     - [Install Satellite](#install-satellite)
@@ -44,6 +45,39 @@ Connect to Secrets Manager and save private key to local file.
     ssh -i $awsRegion.pem ec2-user@$instanceIP
     ```
 
+---
+
+## Allow Access to EKS
+
+Follow these steps to add your identity to EKS in order to access cluster resources. 
+
+1. Navigate to EKS in the AWS Portal
+    - Select "Create Access Entry"
+
+    ![eksaccess](/images/eks-permissions/step1.png)
+    
+2. Select your identity
+    - Search for "sso" and select the SSO_AWSAdministratorAccess
+
+    ![eksaccess](/images/eks-permissions/step2.png)
+
+3. Add policies for cluster access 1 of 2
+    - Select AmazonEKSAdminPolicy Click Add Policy
+
+    ![eksaccess](/images/eks-permissions/step3.png)
+
+4. Add policies for cluster access 2 of 2
+    - Select AmazonEKSClusterAdminPolicy Click Add Policy
+    - Select next
+
+    ![eksaccess](/images/eks-permissions/step4.png)
+
+5. Add permissions
+    - Choose create to add your credentials
+
+    ![eksaccess](/images/eks-permissions/step5.png)
+
+---
 
 ## Update Kubeconfig
 
@@ -66,6 +100,8 @@ Running this command will allow you to execute kubectl commands against the K8s 
     aws eks update-kubeconfig --region $awsRegion --name code2cloud
     ```
 
+---
+
 ## Install Defender Helm Chart
 
 Follow these steps to install the K8s Defender. 
@@ -86,6 +122,8 @@ Follow these steps to install the K8s Defender.
     ```Shell
     helm upgrade --install twistlock-defender-ds --namespace twistlock --recreate-pods $helmChart
     ```
+
+---
 
 ## Install Satellite
 
