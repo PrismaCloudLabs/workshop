@@ -60,8 +60,9 @@ resource "aws_db_snapshot" "this" {
 #
 
 module "ecr" {
-  source    = "./modules/ecr"
-  region    = var.region
+  source  = "./modules/ecr"
+  s3_arn  = module.s3.arn
+  region  = var.region
 }
 
 # // ------------------------------------------------------------------------------------
