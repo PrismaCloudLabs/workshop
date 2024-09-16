@@ -1,8 +1,8 @@
 name: "4 - Destroy Lab | TF Destroy"
 
 on:
-  schedule:
-    - cron: '25 21 * * 5' # Destroy everything at 09:25PM UTC (4:25PM EST) on Friday
+#  schedule:
+#    - cron: '25 21 * * 5' # Destroy everything at 09:25PM UTC (4:25PM EST) on Friday
   workflow_dispatch:
   
 jobs:

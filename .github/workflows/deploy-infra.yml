@@ -1,8 +1,8 @@
 name: "2 - Deploy Infrastructure | TF Apply"
 
 on:
-  schedule:
-    - cron: '30 21 * * 0' # Build infrastructure at 09:30PM UTC Sunday night, 04:30PM EST Sunday Night)
+#  schedule:
+#    - cron: '30 21 * * 0' # Build infrastructure at 09:30PM UTC Sunday night, 04:30PM EST Sunday Night)
                           # // Note: GitHub Scheduled Actions run ~around the time you schedule.
                           # // It is not uncommon for the start time to be 1-3 hours after the scheduled time.
   push:
