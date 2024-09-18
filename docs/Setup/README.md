@@ -35,7 +35,10 @@
 ## Terraform Cloud Setup 2 of 3
 
 1. Create a new workspace in your organization
-    - Organization -> Workspaces -> New (Workspace)
+    - Organization -> Workspaces -> New (Workspace) -> API-Driven Workflow
+
+![workspace](/images/tfc/workspace.png)
+
 2. Create a variable set in your TFC organization
     - Organization -> Settings -> Variable sets -> Create variable set
     - Name the variable set (Prisma Cloud Lab, etc.)
