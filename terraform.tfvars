@@ -1,5 +1,4 @@
-# Check your public IP and add it to the list of allowed ingress in order to support 
-# remote access to ec2 instances. To check your public IP run: curl http://checkip.amazonaws.com
+# Modify your region and GitHub information before deploying
 #
 
 region                  = "us-east-1"
@@ -13,15 +12,15 @@ s3_tags  = {
     Terraform   = "true"
     Department  = "Finance"
     Criticality = "High"
-    Owner       = "Nikesh Arora"
+    Owner       = "Bob Loblaw"
     Project     = "RayGun"
 }
 
 vmhosts = [
     {
-        name            = "defending"
+        name            = "raygun-dev"
         install_script  = "scripts/vulnerable.sh"
-        tags            = { Environment = "dev" }
+        tags            = {  Environment = "dev", Project = "RayGun", Owner = "Bob Loblaw", Criticality = "Medium" }
         defender        = true
         defender_type   = "container"
         run_containers  = true
@@ -29,7 +28,7 @@ vmhosts = [
         cidrs           = [ "0.0.0.0/0", "10.0.0.0/8", "172.16.0.0/12" ] # "0.0.0.0/0 triggers Attack Path"
     },    
     {
-        name            = "victim"
+        name            = "raygun-prod"
         install_script  = "scripts/vulnerable.sh"
         tags            = { Environment = "prod", Project = "RayGun", Owner = "Bob Loblaw", Criticality = "High" }
         defender        = false
