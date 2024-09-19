@@ -87,15 +87,15 @@
 
 1. Edit the [terraform.tfvars](/terraform.tfvars) file in the repo root
 
-[edittfvar](/images/github/edittfvar.png)
+![edittfvar](/images/github/edittfvar.png)
 
 
 2. Add your git_repo information and change the region if desired
 
-[editreponame](/images/github/editreponame.png)
+![editreponame](/images/github/editreponame.png)
 
 
 3. Apply changes and issue pull-request (PR)
 
-[createpr](/images/github/createpr.png)
+![createpr](/images/github/createpr.png)
 
