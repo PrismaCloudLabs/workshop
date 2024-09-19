@@ -16,9 +16,13 @@ terraform {
       source = "hashicorp/random"
       version = "3.6.2"
     }    
-    # prismacloudcompute = {
-    #   source = "PaloAltoNetworks/prismacloudcompute"
-    #   version = "0.8.0"
-    # }    
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.5"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.10"
+    }
   }
 }
