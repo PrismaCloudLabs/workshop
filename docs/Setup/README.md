@@ -7,6 +7,7 @@
     - [Terraform Cloud Setup 2 of 3](#terraform-cloud-setup-2-of-3)
     - [GitHub Setup 3 of 3](#github-setup-3-of-3)
         - [Required Repository Secrets](#required-repository-secrets)
+    - [First Deployment](#first-deployment)
 2. [Connect to Resources](/docs/Connect/README.md)
 
 ---
@@ -85,3 +86,16 @@
 ## First Deployment
 
 1. Edit the [terraform.tfvars](/terraform.tfvars) file in the repo root
+
+[edittfvar](/images/github/edittfvar.png)
+
+
+2. Add your git_repo information and change the region if desired
+
+[editreponame](/images/github/editreponame.png)
+
+
+3. Apply changes and issue pull-request (PR)
+
+[createpr](/images/github/createpr.png)
+
