@@ -7,6 +7,7 @@
     - [Terraform Cloud Setup 2 of 3](#terraform-cloud-setup-2-of-3)
     - [GitHub Setup 3 of 3](#github-setup-3-of-3)
         - [Required Repository Secrets](#required-repository-secrets)
+    - [First Deployment](#first-deployment)
 2. [Connect to Resources](/docs/Connect/README.md)
 
 ---
@@ -32,10 +33,15 @@
 4. Clone this repo into your new organization
     - Use this template -> create a new repository
 
+---
+
 ## Terraform Cloud Setup 2 of 3
 
 1. Create a new workspace in your organization
-    - Organization -> Workspaces -> New (Workspace)
+    - Organization -> Workspaces -> New (Workspace) -> API-Driven Workflow
+
+![workspace](/images/tfc/workspace.png)
+
 2. Create a variable set in your TFC organization
     - Organization -> Settings -> Variable sets -> Create variable set
     - Name the variable set (Prisma Cloud Lab, etc.)
@@ -46,6 +52,8 @@
  | <pre lang="sh">AWS_ACCESS_KEY_ID</pre> | Environment variable | false | AWS Access key
  | <pre lang="sh">AWS_SECRET_ACCESS_KEY</pre> | Environment variable | true | AWS Access key secret
  | <pre lang="sh">TF_VAR_git_token</pre> | Terraform variable | true | GitHub PAT value from above
+
+---
 
 ## GitHub Setup 3 of 3
 
@@ -72,3 +80,22 @@
 | <pre lang="sh">TF_CLOUD_ORGANIZATION</pre> | `string` | Name of your created Terraform Cloud Organization
 | <pre lang="sh">TF_WORKSPACE</pre> | `string` | Name of your created Terraform Cloud Workspace
 | <pre lang="sh">TF_WORKSPACE_ID</pre> | `string` | Generated ID of your Terraform Cloud Workspace
+
+---
+
+## First Deployment
+
+1. Edit the [terraform.tfvars](/terraform.tfvars) file in the repo root
+
+![edittfvar](/images/github/edittfvar.png)
+
+
+2. Add your git_repo information and change the region if desired
+
+![editreponame](/images/github/editreponame.png)
+
+
+3. Apply changes and issue pull-request (PR)
+
+![createpr](/images/github/createpr.png)
+
