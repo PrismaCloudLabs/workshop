@@ -32,6 +32,8 @@
 4. Clone this repo into your new organization
     - Use this template -> create a new repository
 
+---
+
 ## Terraform Cloud Setup 2 of 3
 
 1. Create a new workspace in your organization
@@ -49,6 +51,8 @@
  | <pre lang="sh">AWS_ACCESS_KEY_ID</pre> | Environment variable | false | AWS Access key
  | <pre lang="sh">AWS_SECRET_ACCESS_KEY</pre> | Environment variable | true | AWS Access key secret
  | <pre lang="sh">TF_VAR_git_token</pre> | Terraform variable | true | GitHub PAT value from above
+
+---
 
 ## GitHub Setup 3 of 3
 
@@ -75,3 +79,9 @@
 | <pre lang="sh">TF_CLOUD_ORGANIZATION</pre> | `string` | Name of your created Terraform Cloud Organization
 | <pre lang="sh">TF_WORKSPACE</pre> | `string` | Name of your created Terraform Cloud Workspace
 | <pre lang="sh">TF_WORKSPACE_ID</pre> | `string` | Generated ID of your Terraform Cloud Workspace
+
+---
+
+## First Deployment
+
+1. Edit the [terraform.tfvars](/terraform.tfvars) file in the repo root
