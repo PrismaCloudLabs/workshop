@@ -60,8 +60,6 @@ resource "aws_subnet" "public" {
     "kubernetes.io/role/elb"                        = 1
     "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
     Environment                                     = "Dev"
-    git_repo                                        = "sa-lab"
-    yor_trace                                       = "f051ff53-68a7-4047-97e6-ecf441511b3b"
   }
 }
 
