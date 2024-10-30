@@ -4,8 +4,10 @@ Follow the steps below to setup your lab environment.
 
 ## Prerequisites
 
+- AWS Account
 - AWS IAM user with permissions to deploy resources via access key
 - Subscribe to [AWS Linux 2023 AMI](https://aws.amazon.com/marketplace/pp/prodview-ii52uljrxoqiq) from the AWS Marketplace
+- [Terraform Cloud](https://app.terraform.io/public/signup/account) account
 
 ## Workshop Installation
 
