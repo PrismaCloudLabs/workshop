@@ -36,6 +36,34 @@ chmod 400 $awsRegion.pem
 ssh -i $awsRegion.pem ec2-user@$instanceIP    
 ```
 
+### Shell Script Alias
+
+Adjust region and add to your startup script in order to create an alias (connect_ec2) for connecting to instances.
+
+```Shell
+connect_ec2() {
+    local awsRegion="us-east-1"
+    local instanceName=${1:-"raygun-dev"}  # Default to "raygun-dev" if no argument is provided
+
+    # Get the instance IP
+    local instanceIP=$(aws ec2 describe-instances \
+        --region $awsRegion \
+        --filters "Name=tag:Name,Values=$instanceName" \
+        --query 'Reservations[*].Instances[*].PublicIpAddress' \
+        --output text)
+    
+    # Get and set up the SSH private key
+    rm -f $awsRegion.pem
+    aws secretsmanager get-secret-value --secret-id ssh_private_key-$awsRegion \
+        --query SecretString --output text --region $awsRegion > $awsRegion.pem
+    chmod 400 $awsRegion.pem
+    
+    # SSH into the instance
+    ssh -i $awsRegion.pem ec2-user@$instanceIP
+}
+
+```
+
 ### Individual Commands
 
 1. Set Region 
