@@ -18,29 +18,59 @@ Following these steps will allow you to remotely connect to the instances and K8
 
 Connect to Secrets Manager and save private key to local file.
 
+### Single Command
+
+Adjust the region and name to connect to your specified instance.
+
+```Shell
+awsRegion="us-east-1"
+instanceName="raygun-dev"
+instanceIP=$(aws ec2 describe-instances \
+--region $awsRegion \
+--filters "Name=tag:Name,Values=$instanceName" \
+--query 'Reservations[*].Instances[*].PublicIpAddress' \
+--output text)
+rm -f $awsRegion.pem
+aws secretsmanager get-secret-value --secret-id ssh_private_key-$awsRegion --query SecretString --output text --region $awsRegion > $awsRegion.pem
+chmod 400 $awsRegion.pem     
+ssh -i $awsRegion.pem ec2-user@$instanceIP    
+```
+
+### Individual Commands
+
 1. Set Region 
     ```Shell
     awsRegion="us-east-1"
     ```
 
-2. Set instance IP
+1. Set Instance Name
     ```Shell
-    instanceIP="1.1.1.1"
+    instanceName="raygun-dev"
     ```
 
-3. Pull SSH key from AWS Secrets Manager
+3. Set instance IP
     ```Shell
-    aws secretsmanager get-secret-value --secret-id ssh_private_key-$awsRegion --query SecretString --output text --region $awsRegion > $awsRegion.pem
+    instanceIP=$(aws ec2 describe-instances \ 
+    --region $awsRegion \ 
+    --filters "Name=tag:Name,Values=$instanceName" \ 
+    --query 'Reservations[*].Instances[*].PublicIpAddress' \ 
+    --output text)
     ```
 
+4. Pull SSH key from AWS Secrets Manager
+    ```Shell
+    aws secretsmanager get-secret-value \ 
+    --secret-id ssh_private_key-$awsRegion \ 
+    --query SecretString --output text \ 
+    --region $awsRegion > $awsRegion.pem
+    ```
 
-4. Modify key permissions
+5. Modify key permissions
     ```Shell
     chmod 400 $awsRegion.pem 
     ```
 
-
-5. Connect to EC2 instance
+6. Connect to EC2 instance
     ```Shell
     ssh -i $awsRegion.pem ec2-user@$instanceIP
     ```
