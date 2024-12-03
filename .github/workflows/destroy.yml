@@ -42,3 +42,15 @@ jobs:
         with:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4 
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-east-2"
+
+      - name: Remove dangling hub flow log group
+        run: |
+          REGION=$(grep "region=" terraform.tfvars | awk -F' = ' '{print$2}' | sed 's/"//g')
+          aws logs delete-log-group --log-group-name hub-vpc-flow-log-group --region $env.REGION
