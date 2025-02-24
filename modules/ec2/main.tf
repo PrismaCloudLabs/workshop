@@ -1,10 +1,23 @@
 data "aws_ami" "aws_linux" {
+  owners      = ["amazon"]
   most_recent = true
+
   filter {
-    name   = "product-code"
-    values = ["8acfvh6bldsr1ojb0oe3n8je5"]
+    name   = "name"
+    values = ["al2023-ami-ecs-hvm-2023.0.20250117-kernel-6.1-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
   }
 }
+
 
 # // ------------------------------------------------------------------------------------
 # // Create SSH Private Key
