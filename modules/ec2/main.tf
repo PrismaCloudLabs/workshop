@@ -60,7 +60,7 @@ resource "aws_instance" "this" {
   private_ip             = each.value.private_ip == null ? null : each.value.private_ip
   vpc_security_group_ids = [aws_security_group.instance_sg[each.key].id]
   root_block_device {
-    volume_size = 20
+    volume_size = 40
   }
   associate_public_ip_address = true
 
