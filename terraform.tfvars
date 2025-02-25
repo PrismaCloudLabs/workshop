@@ -6,6 +6,7 @@ git_repo                = "YourOrg/YourRepo" #Organization / repo-name
 
 deploy_eks              = true
 cluster_version         = "1.31"
+eks_node_size           = "t2.medium"
 
 s3_tags  = {
     Environment = "prod"
