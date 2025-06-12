@@ -34,7 +34,7 @@ module "network-hub" {
 #
 
 resource "aws_db_instance" "this" {
-  db_name                = "raygun-${random_string.this.id}"
+  db_name                = "raygun${random_string.this.id}"
   allocated_storage      = 10
   engine                 = "mysql"
   instance_class         = "db.t3.micro"
@@ -123,8 +123,68 @@ resource "aws_s3_bucket" "appdev" {
 # // K8S / EKS
 #
 
+# module "eks" {
+#   //source  = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=7cd3be3fbbb695105a447b37c4653a00b0b51b94"
+#   source  = "terraform-aws-modules/eks/aws"
+#   version = "~> 20.0" # Use a recent, stable version
+
+#   cluster_name    = var.eks_cluster_name
+#   cluster_version = var.cluster_version
+
+#   cluster_endpoint_public_access  = true
+#   cluster_endpoint_private_access = true
+
+#   cluster_addons = {
+#        aws-load-balancer-controller = {
+#       # The add-on will be deployed with an IAM role for its service account
+#       create_iam_role = true
+#     }
+#     coredns = {
+#       most_recent = true
+#     }
+#     kube-proxy = {
+#       most_recent = true
+#     }
+#     vpc-cni = {
+#       most_recent = true
+#     }
+#   }
+
+#   vpc_id                   = module.network-hub.vpc_id
+#   subnet_ids               = flatten([module.network-hub.public_subnet_id])
+#   control_plane_subnet_ids = flatten([module.network-hub.private_subnet_id])
+
+#   # EKS Managed Node Group(s)
+#   eks_managed_node_group_defaults = {
+#     instance_types = [ var.eks_node_size ]
+#   }
+
+#   eks_managed_node_groups = {
+#     c2c = {
+#       min_size     = 1
+#       max_size     = 3
+#       desired_size = 2
+
+#       ami_type       = "AL2023_x86_64_STANDARD"
+#       instance_types = [ var.eks_node_size ]
+#       capacity_type  = "SPOT"
+#     }
+#   }
+
+#   # Cluster access entry
+#   enable_cluster_creator_admin_permissions = true
+
+#   tags = {
+#     Environment = "prod"
+#     Terraform   = "true"
+#     Owner       = "RayGun AppDev Team"
+#     Project     = "RayGun"
+#   }
+# }
+
 module "eks" {
-  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=7cd3be3fbbb695105a447b37c4653a00b0b51b94"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0" # Use a recent, stable version
 
   cluster_name    = var.eks_cluster_name
   cluster_version = var.cluster_version
@@ -133,21 +193,15 @@ module "eks" {
   cluster_endpoint_private_access = true
 
   cluster_addons = {
-    coredns = {
-      most_recent = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent = true
-    }
+    eks-pod-identity-agent = {}
+    coredns = {}
+    kube-proxy = {}
+    vpc-cni = {}
   }
 
   vpc_id                   = module.network-hub.vpc_id
   subnet_ids               = flatten([module.network-hub.public_subnet_id])
   control_plane_subnet_ids = flatten([module.network-hub.private_subnet_id])
-  create_iam_oidc_provider = true
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
@@ -177,38 +231,6 @@ module "eks" {
   }
 }
 
-data "aws_iam_policy_document" "aws_load_balancer_controller_assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect  = "Allow"
-
-    principals {
-      type        = "Federated"
-      identifiers = [module.eks.oidc_provider_arn]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "${module.eks.oidc_provider}:sub"
-      values   = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
-    }
-  }
-}
-
-resource "aws_iam_role" "aws_load_balancer_controller" {
-  name               = "AmazonEKSLoadBalancerControllerRole-${var.eks_cluster_name}"
-  assume_role_policy = data.aws_iam_policy_document.aws_load_balancer_controller_assume_role_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller_attach" {
-  policy_arn = "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
-  role       = aws_iam_role.aws_load_balancer_controller.name
-}
-
-# // ------------------------------------------------------------------------------------
-# // K8S / EKS / Load Balancer
-#
-
 data "aws_eks_cluster_auth" "this" {
   name = var.eks_cluster_name
 }
@@ -226,49 +248,6 @@ provider "helm" {
     token                  = data.aws_eks_cluster_auth.this.token
   }
 }
-
-resource "helm_release" "lb" {
-  name       = "aws-load-balancer-controller"
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "aws-load-balancer-controller"
-  namespace  = "kube-system"
-
-  set {
-    name  = "region"
-    value = var.region
-  }
-
-  set {
-    name  = "vpcId"
-    value = module.network-hub.vpc_id
-  }
-
-  set {
-    name  = "image.repository"
-    value = "602401143452.dkr.ecr.${var.region}.amazonaws.com/amazon/aws-load-balancer-controller"
-  }
-
-  set {
-    name  = "serviceAccount.create"
-    value = "true"
-  }
-
-  set {
-    name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.aws_load_balancer_controller.arn
-  }
-
-  set {
-    name  = "clusterName"
-    value = var.eks_cluster_name
-  }
-}
-
 
 # // ------------------------------------------------------------------------------------
 # // GitHub Secrets from Terraform Output
