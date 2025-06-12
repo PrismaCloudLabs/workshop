@@ -34,6 +34,7 @@ module "network-hub" {
 #
 
 resource "aws_db_instance" "this" {
+  db_name                = "raygun-${random_string.this.id}"
   allocated_storage      = 10
   engine                 = "mysql"
   instance_class         = "db.t3.micro"
