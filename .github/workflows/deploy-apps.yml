@@ -164,34 +164,34 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$CVE .
           docker push $REGISTRY/$REPOSITORY:$CVE
 
-  Install-Defender: 
-    name: Install ${{ matrix.configData.defenderType }} defender
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    needs: [ Deploy-Config ]
-    strategy:
-      fail-fast: false
-      matrix:
-        configData: ${{ fromJson(needs.Deploy-Config.outputs.combinedArray) }}
-    uses: ./.github/workflows/ruw-defender-install.yml
-    with:
-      AWS_REGION: ${{ needs.Deploy-Config.outputs.region }}
-      SG_ID: ${{ matrix.configData.sgID }}
-      DEFENDER: ${{ matrix.configData.defenderType }}
-      INSTALL_DEFENDER: ${{ matrix.configData.defenderInstall }}
-      USERNAME: "ec2-user"
-    secrets: 
-      HOST_IP: ${{ matrix.configData.publicIP }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      EC2_KEY: ${{ secrets.EC2_KEY }}
-      PC_KEY: ${{ secrets.PC_KEY }}
-      PC_SECRET: ${{ secrets.PC_SECRET }}
-      PC_CONSOLE: ${{ secrets.PC_CONSOLE }}
+  # Install-Defender: 
+  #   name: Install ${{ matrix.configData.defenderType }} defender
+  #   if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  #   needs: [ Deploy-Config ]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       configData: ${{ fromJson(needs.Deploy-Config.outputs.combinedArray) }}
+  #   uses: ./.github/workflows/ruw-defender-install.yml
+  #   with:
+  #     AWS_REGION: ${{ needs.Deploy-Config.outputs.region }}
+  #     SG_ID: ${{ matrix.configData.sgID }}
+  #     DEFENDER: ${{ matrix.configData.defenderType }}
+  #     INSTALL_DEFENDER: ${{ matrix.configData.defenderInstall }}
+  #     USERNAME: "ec2-user"
+  #   secrets: 
+  #     HOST_IP: ${{ matrix.configData.publicIP }}
+  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #     EC2_KEY: ${{ secrets.EC2_KEY }}
+  #     PC_KEY: ${{ secrets.PC_KEY }}
+  #     PC_SECRET: ${{ secrets.PC_SECRET }}
+  #     PC_CONSOLE: ${{ secrets.PC_CONSOLE }}
 
   Run-Containers: 
     name: Pull and run ${{ matrix.configData.runContainers }}
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    needs: [ Push-to-ECR, Deploy-Config, Install-Defender ]
+    needs: [ Push-to-ECR, Deploy-Config ]
     strategy:
       fail-fast: false
       matrix:
