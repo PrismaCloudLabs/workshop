@@ -147,6 +147,7 @@ module "eks" {
   vpc_id                   = module.network-hub.vpc_id
   subnet_ids               = flatten([module.network-hub.public_subnet_id])
   control_plane_subnet_ids = flatten([module.network-hub.private_subnet_id])
+  create_iam_oidc_provider = true
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
@@ -176,6 +177,33 @@ module "eks" {
   }
 }
 
+data "aws_iam_policy_document" "aws_load_balancer_controller_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Federated"
+      identifiers = [module.eks.oidc_provider_arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${module.eks.oidc_provider}:sub"
+      values   = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
+    }
+  }
+}
+
+resource "aws_iam_role" "aws_load_balancer_controller" {
+  name               = "AmazonEKSLoadBalancerControllerRole-${var.eks_cluster_name}"
+  assume_role_policy = data.aws_iam_policy_document.aws_load_balancer_controller_assume_role_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller_attach" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
+  role       = aws_iam_role.aws_load_balancer_controller.name
+}
 
 # // ------------------------------------------------------------------------------------
 # // K8S / EKS / Load Balancer
@@ -228,6 +256,11 @@ resource "helm_release" "lb" {
   set {
     name  = "serviceAccount.name"
     value = "aws-load-balancer-controller"
+  }
+
+  set {
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = aws_iam_role.aws_load_balancer_controller.arn
   }
 
   set {
