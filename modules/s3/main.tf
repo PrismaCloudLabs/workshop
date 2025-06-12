@@ -13,6 +13,11 @@ resource "aws_s3_bucket" "this" {
   tags          = merge(var.tags, {})
 }
 
+resource "aws_s3_bucket_acl" "this" {
+  bucket = aws_s3_bucket.this.id
+  acl    = "public-read"
+}
+
 resource "aws_s3_object" "this" {
   for_each = var.s3_files
   bucket   = aws_s3_bucket.this.id

@@ -41,7 +41,7 @@ resource "aws_iam_policy" "ecr_access" {
         ],
         Resource = [
           "${var.s3_arn}",
-          "arn:aws:s3:::*/object/*"
+          "arn:aws:s3:::*"
         ]
       }
     ],
