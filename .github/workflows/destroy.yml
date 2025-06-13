@@ -52,5 +52,5 @@ jobs:
 
       - name: Remove dangling hub flow log group
         run: |
-          REGION=$(grep "region=" terraform.tfvars | awk -F' = ' '{print$2}' | sed 's/"//g')
+          REGION=$(grep "region                  =" terraform.tfvars | awk -F' = ' '{print$2}' | sed 's/"//g')
           aws logs delete-log-group --log-group-name hub-vpc-flow-log-group --region $env.REGION
