@@ -42,6 +42,15 @@ git clone https://github.com/Azure/azure-openai-samples
 # Clone MongoTools
 git clone https://github.com/mongodb/mongo-tools
 
+pip install -U "huggingface_hub[cli]"
+huggingface-cli download Qwen/Qwen2.5-Coder-32B-Instruct config.json tokenizer.json tokenizer_config.json
+huggingface-cli download ai21labs/Jamba-v0.1 config.json tokenizer.json tokenizer_config.json
+huggingface-cli download microsoft/Phi-3.5-mini-instruct config.json tokenizer.json tokenizer_config.json
+huggingface-cli download tiiuae/falcon-mamba-7b-instruct config.json tokenizer.json tokenizer_config.json
+huggingface-cli download deepseek-ai/DeepSeek-R1-0528 config.json tokenizer.json tokenizer_config.json
+huggingface-cli download google/flan-t5-xxl config.json tokenizer.json tokenizer_config.json
+huggingface-cli download microsoft/table-transformer-detection config.json tokenizer.json tokenizer_config.json
+
 # Clone Sample App Repo and Run It
 # git clone https://github.com/dockersamples/example-voting-app
 # cd example-voting-app/
