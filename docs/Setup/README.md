@@ -73,9 +73,6 @@
  |--------|---------|-------------|
 | <pre lang="sh">AWS_ACCESS_KEY_ID</pre> | `string` | AWS IAM access key with the ability to create and provision infrastructure
 | <pre lang="sh">AWS_SECRET_ACCESS_KEY</pre> | `string` | Password/secret key for IAM access key
-| <pre lang="sh">PC_CONSOLE</pre> | `string` | Runtime console path (Runtime -> Manage -> System -> Utilities )
-| <pre lang="sh">PC_KEY</pre> | `string` | Access key with permissions to install Defender (Settings -> Access Control -> Access Keys)
-| <pre lang="sh">PC_SECRET</pre> | `string` | Generated secret access key used for authentication
 | <pre lang="sh">TF_API_TOKEN</pre> | `string` | API token used for GitHub -> Terraform Cloud integration (Terraform Cloud -> User Drop-Down -> Account Settings -> Tokens)
 | <pre lang="sh">TF_CLOUD_ORGANIZATION</pre> | `string` | Name of your created Terraform Cloud Organization
 | <pre lang="sh">TF_WORKSPACE</pre> | `string` | Name of your created Terraform Cloud Workspace
